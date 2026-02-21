@@ -1,0 +1,902 @@
+[
+    {
+        "name": "Worker_1",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "b4f4289b0805e301147720acd04faec7d8218a7c4917dedae30212eadf8bea1e",
+        "wallet_address": "nano_3xt5ixb6jg5ese56cjpe78md76htg8crmc43abw5m3aupbe6njwa6xydx1hb",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_2",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "b5f948c55fe7da3dd8459308e309b9e53424e80b3d5d8bf71534b9fd0f054602",
+        "wallet_address": "nano_34qpwet8r6dgh4bckt7cpwatf4ezxs1r87re4txi9e8eqop4obn3cr48jbsm",
+        "withdraw_threshold": 1000,
+        "earnings": 2682
+    },
+    {
+        "name": "Worker_3",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "3f81dbe23401e9f232a1642a02a0b237e98d9fc8083ecb22dd73233e499cca38",
+        "wallet_address": "nano_1a6krh3qbo7tau667dzc973zferg6y8ky1iemia7qqogzrf59aazjik4rogb",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_4",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "66bd70bef12b4458b25c0d39d2ae5c62b56ad9c716618fc704354181fabb7a5d",
+        "wallet_address": "nano_19idbzb1dgb5sw8wgsger3s8p8tnk91scqk7wmwjet7i3s7oc3ifmf85wnst",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_5",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "3a63edbefc1449e6dba55a139c18eb2818f3e9b453b1252ce47819780b2e4721",
+        "wallet_address": "nano_1xxsxi3uahbzdn3k4biez98hekactdungfe4sw13an43ro9a85drqrp5rx49",
+        "withdraw_threshold": 1000,
+        "earnings": 2400
+    },
+    {
+        "name": "Worker_6",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "91305c9017340f49c6276bbb5f48dc89b7fd7c81b83e70d804424d37cccad299",
+        "wallet_address": "nano_1iy4xh1am3phb9dwo3b3dhzqne97r3eeynrsa8kz9wcjx5y9zg59iz7cqhuw",
+        "withdraw_threshold": 1000,
+        "earnings": 1800
+    },
+    {
+        "name": "Worker_7",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "83c34ff2b7fbd72df25b3d13a8810e0fa077fd7d9df0f4b326614fb167d72ba9",
+        "wallet_address": "nano_1jfsyymxgwixbx1yg3dstkjezubbmmojuhrcb3zyfwjdgdx39doyihgu38d7",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_8",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "a30c57e618a26f708d30d150d9e8765c8f41bc30118c641b326ee457dceb598c",
+        "wallet_address": "nano_3hz533eftwe6sh6imsem7pj1gjxorkubnemobccy6z3kptbnwk4wmkzh9f1u",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_9",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "3507b747de9a49d3029871f9e13f2e38500422451ab9f6335a8d10c0365c93d6",
+        "wallet_address": "nano_1bnm5ek8usi1y4165kx36cggng4ua3en1zc67o53icukc3uxc7eriq4p5n1g",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_10",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "7800454ec8c1f7bbf8e4034ab90bd5237ad74860040b37062676314d5a73b65c",
+        "wallet_address": "nano_31t966a7b6m4xc38mk7spb7xb86jqjygh3uscc4zbb6b6777butf6h1rwaup",
+        "withdraw_threshold": 1000,
+        "earnings": 1800
+    },
+    {
+        "name": "Worker_11",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "34219795f169b6ec08075a2bbc1ef4bab653b38a283bcec59083bdceece4bd7f",
+        "wallet_address": "nano_1eedm6rtas9ptacaoix4p4h4oxgtgcr7zmcgh91344rw8bdi8ao6rxm1fjqd",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_12",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "fbed4404f7aef230f174c2c8ad03eb27535bc45cb76a65aac263a2c3f5eccf34",
+        "wallet_address": "nano_141wiazfrc5t5g9tukei1iw7yqhwgxpoy8opnfhtjproswh6s9x99yxnnxkr",
+        "withdraw_threshold": 1000,
+        "earnings": 2400
+    },
+    {
+        "name": "Worker_13",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "4e1dd94a6735dea285c4a9f1e92cd22e5c4aab28c663aacf6794de5862aada03",
+        "wallet_address": "nano_1z9of7mqn747tiq6tuu6w9xxf14kpuq99uyaq3wartmhhow1j658s4f3pn3c",
+        "withdraw_threshold": 1000,
+        "earnings": 600
+    },
+    {
+        "name": "Worker_14",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "860f84f7d1db984360ab9ed5f904012a9a45048467fa263a9fa9f83eaa47e3c1",
+        "wallet_address": "nano_3aq1694ukzig5t3m9bpwjyns6frojtidpqomcwhnowfruyeupqcfcq8ckcdg",
+        "withdraw_threshold": 1000,
+        "earnings": 1200
+    },
+    {
+        "name": "Worker_15",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "6b24fc6795d8de56b5ebd356d91cf0adf3d62a6d72afd9a50d882160d3b534fe",
+        "wallet_address": "nano_1jzizxjffdnjirf91q16jhoiidso61sgw16poiuqqpz8u7uuk5tff8i14fix",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_16",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "3930f99cf04f7a4284ea3663af9fa75639231a00d741c690804ffe44fad6e431",
+        "wallet_address": "nano_1udh3qp1py7cd36s5q1zszu971zy4p1waao194ef3isnys3nxq4ycje6trh1",
+        "withdraw_threshold": 1000,
+        "earnings": 1200
+    },
+    {
+        "name": "Worker_17",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "ed5acde448197a4e1337310911f9296e0ac50771c524870332d0ba424c6eff82",
+        "wallet_address": "nano_35mfxixzykwbi3yomkk9bipi89fbqcgpjte4yzf68iuu7ygrfgsmm71eq339",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_18",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "d85e7b5cdfc84b8d1c9671a5e4879736af42a3e63c5bc6bdf31c134c25ff29d4",
+        "wallet_address": "nano_1pfb5tfm5m6o5poeugip74j7oyrdckgxomxs8p9mzx9ogjijcpeynf8qgtrj",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_19",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "f25d2b5993db832079ef96e668e7d45681fb2c6576d43a97a445cd1f001ea486",
+        "wallet_address": "nano_3tyqg7cxcy4dytz85axjw3pjyqd4xdfpikzibxdqg6bta3c4fi5wjq1mtmmm",
+        "withdraw_threshold": 1000,
+        "earnings": 600
+    },
+    {
+        "name": "Worker_20",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "926b689cbd7233a6d7ccb014a88770474c9c7a1a119da5d87343a1a7d1bc77a1",
+        "wallet_address": "nano_3xwis7dc1nm1p7s8xa4g457zzzicg59x35ywdk3osfdue1gjm3symfz8y63p",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_21",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "2e8ba61c3486105fc39c7b7ae80fc7b8e6cd992f078d8a5b8989699848896de4",
+        "wallet_address": "nano_1cn97wfgsen5guhgoupxhkbpb1hb5xqttwg3o3yi6acte4a5mbr99w6jgq4n",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_22",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "7021feecba11ba4d338b67414e2a0218a0e4186a4ad59e0ae7ef89fa586bb262",
+        "wallet_address": "nano_3zskyac8y1th6sac4ezyiwiq5jztsdig789qzdw81jq7xezp4d3o3ti9wn67",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_23",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "59163f71c579736aab3799d42ee9f5a507496b86e394d05c5889ff436c73aa88",
+        "wallet_address": "nano_1ydzt5ekcxozougtapfukn38ki448kbfs5nkuqu4sr9sn75icr4ejj1ozzxk",
+        "withdraw_threshold": 1000,
+        "earnings": 2400
+    },
+    {
+        "name": "Worker_24",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "25e021775298270716464bdfbfc23a50b09fd87293e4d2547bf5b542e13bd55e",
+        "wallet_address": "nano_3aiaoob8s4igq5c43o46yiztj6bqhpqbjz8sxfz7habk5rts7rzrgtfha746",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_25",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "7e935b860cf1f3fb913e7902a65875291fa8d6e2964f4408be7a512a514b27b9",
+        "wallet_address": "nano_1a9mqu3qsxbeoo1uunjhtpqnmzwn8igkoycipihzyjihp4g64h6rpcgrcj7q",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_26",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "200c794ac50057fa993401255190d7c7412cce726ab3422fd7bbaf8ddecb3f41",
+        "wallet_address": "nano_3tyjdsiw9kddo7dh9rkqpu4mqjmutpkmis37hj4jq8mtdtqkpx7gekkm9nmz",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_27",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "a11665e1e1179d945d24a2e534e2e26911b19eb099a5b47f20e0dea69c52c7ed",
+        "wallet_address": "nano_1rdwt6j9owsu37dnrkfp4if1q4ozaa6wykw1uudyak65c6cf148iraozes73",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_28",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "e5a87421da090b3741ff32ec4b239a4ffd54d7d11f7dcc6c0042fcbfc337698b",
+        "wallet_address": "nano_3m7hkyk1axwbqtyt9p3c54f5ps9s169fkep61uozrpkfjsajej4ynhdd1osa",
+        "withdraw_threshold": 1000,
+        "earnings": 600
+    },
+    {
+        "name": "Worker_29",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "2cce11c0ab5e809b1c683bc27db88ed3f33521d25ffeb8d1e3b70d2235daeaeb",
+        "wallet_address": "nano_1iauu7jze1higk7nr7fs9qkmqx5pnjzofbbfnwuhxbxuo9bqb18ipeh1cjmy",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_30",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "8f8ee38a92e04d005ef35e7eb9e7a4c6a7e42456761b4944a5b631c7ba695af5",
+        "wallet_address": "nano_3j7dc8mfwdy3nwyk3churhftn3e1xgdjhrroo11rm1faisf331oq55qnnpd4",
+        "withdraw_threshold": 1000,
+        "earnings": 1740
+    },
+    {
+        "name": "Worker_31",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "339edc4ffecd50cb23cbac1c6a96d024ba1316092b7b82b197777ce66cbff161",
+        "wallet_address": "nano_1knkui9i9ffuuf58rrb1etyjr8q6yb3fdbdtj3qdnz6cfhqwj3zb6m4x9sx7",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_32",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "866b92ac39ff2e3aea05e305c25569cc5ca34f01c64b29d70c84e40c743745e7",
+        "wallet_address": "nano_3g1xfnnxkp6gwuafwxxc9sdp7wzzzkbxj8wrf1o7eb7535iw8b177sgb8n8b",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_33",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "03955b577ea8f37fff893a8335cfa59820bc7a9700401d46fc432aef2fab8a40",
+        "wallet_address": "nano_3g9rh54ck7sw1xcuc86e54xd9jahnfmwhhbpx8fkeht6skc8f8zwyb79aw1e",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_34",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "87c8ba25bcee1b62f4837d7838ef82dc339905bc811bfbc55a3201c84fb1c427",
+        "wallet_address": "nano_1nyqb6eudskmhzfps74oe5zf47tmm4xb4i3g3sp51wrzp7r47xb1e9pf8si1",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_35",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "86f5323160054ca6ec32899b788720d8971f7a655a9424e0795bae040698ed75",
+        "wallet_address": "nano_16kzje4xebnt1bhocix4sfn8wc3rfr6p8yco9nz8ju5ufpes779sswebobof",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_36",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "d458c37095b3860ad4e443b34774e3d5ef9ddbc9b8563516bb8836867cad81ed",
+        "wallet_address": "nano_1qeej8xb4ampeqwpwsb8bhts7podztkbxkxw7czgp91c4whxskrhux1zw616",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_37",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "42f8b4f2fbb03d79e9bbc4c90e32cd67fd7819c9e23f8d42981519260e0ba805",
+        "wallet_address": "nano_1r68htgo4f1wh7eeaciup4wesusn5ku4tngky85ga8imkc8yy1d4g7rfxou5",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_38",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "e184947e87fe16f8e4c05b5676a51878e5a0d7f941ce9ee76946bd36cb9f3611",
+        "wallet_address": "nano_37jo3x3piwth3u383eryoegzosskfkndufgcghmywd6jfggqzbm6rfrrc8w6",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_39",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "195f3c6a9e0bcefcc1b13f9ab46d289905fa4c49a852496df90e8798d9a8fd39",
+        "wallet_address": "nano_18mpwnkfr997t17p5tqhfshinj7ogrkb5tmj6fh7yb1dpi5k9a47rrprcp7m",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_40",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "f1c2a0cfa24afa2420d6ca8e37d29e49ede112f1ac911e8c08724b48a0e09b94",
+        "wallet_address": "nano_3fw7aupe9ifupdbrzx5oausuhu91ogu7zo5r7gde94dasxmko6czw6zqskk5",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_41",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "71fe9716be7344a7d9e1f44c04945ca04befe5c58c2054652a7eeff3fd816b31",
+        "wallet_address": "nano_13goxhx9zdhkpuupjcobeg1mojw3zd5weh6uoo9837199a19855btbw449p3",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_42",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "32731fc105debb4d8b3e0b4d5cc832deb18415c101dca994693c271b28b44d57",
+        "wallet_address": "nano_35b893xsobzbonwzge9f48b43kp57x16j3x5gsztgqdb8eqoeoz75sy8usbf",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_43",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "0e96a470148b96d77a7f0bbcc88bd6ff7a1d073a24587effe234d22d49eff6f0",
+        "wallet_address": "nano_14qgm1pcc1cguk7b88ed7agg85gpgmaeyfmnqkf7yyxjamz838b5kayj4okc",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_44",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "9ab9d03410534c866b8e4d098e6e6ea78086097e6958a34955955d2c7a7d4163",
+        "wallet_address": "nano_1s3kgkwuk8nxpkuwypzknfz4b9jk15jsnxrfjmencztm915d3dktaqccfb84",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_45",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "92b4653d6fe056b72d8014fc70a399bade1b1a2f511d903bc9b4da9bc5be64b2",
+        "wallet_address": "nano_3h3yezbghmnzfukyaky86in1hrtwgiddxyjph3isje761bng4f9pynxq8odp",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_46",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "f76cac0600d8757a1f39e1144301516405b57414c8db4d2e50730f06b534b8fd",
+        "wallet_address": "nano_36zf5n5csg65q8nxo97e69ebk4a534mngprigkg7tykra8hthyzsonsrrqj4",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_47",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "ba37a9c8b8c618826e0af9522a1368d966ead86651cd713fbb78a6ee3b7e2c88",
+        "wallet_address": "nano_1jpaord6exjsw6ro4k35p7k5nc3uno8zc8gqmeqz6p8fq9xsetbznh4yo5ju",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_48",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "07cbfc1e209f2edd27bd790586a32c6a6aee1487da66d0819f31f3a1a30fa7e0",
+        "wallet_address": "nano_131h5bk3tkgu8gii88m68uhctofp7r1udqk58xkpc4gftgpny6wq7yif3cku",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_49",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "8ecd717af9dddd6c925744bf07f82465475f5f28a6caf4e893afb8788c6bee6b",
+        "wallet_address": "nano_1zpbg54tmny3yij68sxfxpx8wtmfmpq7gqah75qro4eomds7wbe5dcyetfou",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_50",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "744cb90c61109ce5878810e9dbac223c63baa7a43080a748c765255b72dd7069",
+        "wallet_address": "nano_116tt7mkt37x5w48j9hikkxnibuc39e81qunzocqupqi145h7onaggh89amp",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_51",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "24237f32eadbbac60f35cf30e103fad749b010a77649bb6e5c806a83e1fec33e",
+        "wallet_address": "nano_339n1sd9tj39gurzwa8guj94o48uq44x5uztiie3cmeow1dcxq6pzsk19x1y",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_52",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "04885cc5d593fe906094ec1b00021121c6d8c6482407d884e84fe3cc7d602381",
+        "wallet_address": "nano_3z55149h7fjno9xsqdnyc17tfen19p3jkepusudihmm71he6eq4jp1nbae8i",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_53",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "c86f9fe8d4587917cf7cc5d86815018d5e78c85f3e306f3f3921a71b480fc8b7",
+        "wallet_address": "nano_1un7ts5kz64m6s5ndi13uy9tjsna8xgbmtdttrhguti71xheg1tijw5b1r98",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_54",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "624242a95d5fcaa306d6c3bc2d46345ef7c65670abdab3f1f63a272e25ceb4df",
+        "wallet_address": "nano_3xjwqbi4ekatzqmy7qaq9y6ojujo9ednzkps8q8fkqocb395n3fcmyofozd3",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_55",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "43a182d4d5d7dc26a932ebdcda1221ab5618e9a9594a88386a391f5b9efee263",
+        "wallet_address": "nano_1njc187gwdctiqbmw8o5iwf7if5z7qaiwozp5ppyu7q11zj8emu1354kkm7a",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_56",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "aeda7dd4e9c9f9174d74a700f25f188d6fc6d3841e1bcb43832c7ac54969584e",
+        "wallet_address": "nano_39ifd9qxxno58itph7f3urnadnbhxw8mbm6nxcct6cj64s3mjt9xaic3w8mp",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_57",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "b2693a49ffdb3c9d40b4142e68642a82991c2260b25f6c5faf9db638953aa920",
+        "wallet_address": "nano_15di615gn47b7cpec6xjc7zw468sxqaa8uag4zsbww34fus7fai8gyzdmph1",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_58",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "44c5a8cfba42dbe4798afc666869245d62a983e72f09bba4cf7e2687958305fa",
+        "wallet_address": "nano_15nseideydpexzajnb869se3n15ghw7xs7iik11hupr4xwuhziwwfsst4gq7",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_59",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "521bf0f6f79123ea2e6642ab37dd69cf53770a275ec1c1d757c0f39eeae95f31",
+        "wallet_address": "nano_33kfqq47nqfd4g6cokzg45defxwdmye3z9x64heqbcnodn7oz4sh3q3x9smc",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_60",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "976b0314657f9fb5f9db8688a82c28f2532c79ade50d2393f468a932a70d8335",
+        "wallet_address": "nano_39m1neqdwa5jjaigwhdon8zpqsuhfzk6skee1t6reun56cx6zh4rtq9y3jxo",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_61",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "d0b771676ffd6e013ca75b4661fe39eb9b58b86c92dae94306fe1d665be8ceb1",
+        "wallet_address": "nano_1ckhtdj93x4yqiq6r59s71pqmpxoy5rfbe93kfrb6j968axr4n3wja4u6cmx",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_62",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "150ab8ac08509a5898d08b8efae674c610eeccd11e2484235ca1db8401da5311",
+        "wallet_address": "nano_31u6n69fetdmn754cpob1f8xmjksoszy1saod5tgfk5udprewfq5d6wep91n",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_63",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "cd9d675ba80729261977546cb26e20378c193c443ec16f669f3b4103ec227241",
+        "wallet_address": "nano_1qyxedg85mh514godaxq16a1hmx8zyww41zu6w1tamyzjp8aqm561hj3cqxe",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_64",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "1c9c7cab36e437e2e809c8098b50e614878dc89de52c49c92e2bb2c20bf31bac",
+        "wallet_address": "nano_18t5dxikw51qse4c58jc8hnprwtummr6f16nmn6sir1smjwtqbdxiqrs1dau",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_65",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "02dafbd9f71b2999e83d79c9054f588b8cc58047a9b41562f8c867561207127c",
+        "wallet_address": "nano_16houn6ed17gy7kqg4j4g3ig5x966foaspi7jhade8ij9pkaogeu6pmrt5nm",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_66",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "653fef42f3649c6bd1aa2b1f2dbc010cc5bb68ec73dd3851af88c56993d057f4",
+        "wallet_address": "nano_3heajda63nngqxn7kzyx7umstat3c3w5whmwzz5514rigc55ocrk1tm3neqb",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_67",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "13cf1e70d2739fa4d837b1fa47ab44b54653c112ba67bfbe291a76e4d1d3d210",
+        "wallet_address": "nano_36kmgcey33zwo5ddfikb6actrcjdh7iuxoydz1r3466qgqr8zf4jrc8uyjiz",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_68",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "9bd0660db0f9545cb9402eea39f5770e162303b3a8f7bf3ed96af7a30410803e",
+        "wallet_address": "nano_3gep8p4shbxhtbro7k4imeqqk3kgih69nd1q7dad1cnnuuwsns34hbou56ju",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_69",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "da63a28f47cb39405b8cbb8a077e100bcba9e5f8be429de47b1216651bb3fda8",
+        "wallet_address": "nano_3w9t1z1pxa66gthryn7b8u94qzb896csnu9tgqggwehareaxixd8rbookzx4",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_70",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "eb6f0b3af448b94a8ab276596011f22c07422099ae0bdd8bd88c5f5ab2335e49",
+        "wallet_address": "nano_39nj5mbg5j9zh7oeeq93sfrkxo8kp1hwf4mc91797muzcmoiaudfqf5owucn",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_71",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "cc4523524ad333cc53352ffff466f7ebae357af99e6ec812ff22547fc75024df",
+        "wallet_address": "nano_3tmskawxijz7xedkiwjy3ywpzm4z5wit135xk9zi89yxsqn7pdwx7x7fjky8",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_72",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "20f773e399631a466e3ca875efb5a34c2f0e358885c05b7a4cc2f364db5c46ae",
+        "wallet_address": "nano_1he79qsjeoux7zkxrkp1n75t5mut91wuznn439gzsko8g35p5srgyzs9okny",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_73",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "9c7d1e2ad65442fe247af148f60730ccb17e14662781c4ce3b36e6e1ba4d50f4",
+        "wallet_address": "nano_17jqr6pcna3b8pxasnkr4s3nissku7tfpetsjd4x11ikr4qd4i66cix6zmgp",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_74",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "ab9833a9e7c0d7271bf7bafd9f3d6b9f6a1526f7e2634fb203f871688f236801",
+        "wallet_address": "nano_3xc7bf3juniit6u7pdp5qbx5ej7ndk5bawqyjjzjk7j1bmr54i4epnb5m48i",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_75",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "0f47193e41df430a323cc16a40d4608aff5048f9884153d8d127a8545a3cb33c",
+        "wallet_address": "nano_3qzcr8ozwt4d1jdwqsac3x636bti4f65tpm1kkg4j8wqoxps5dgeyde3uj3w",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_76",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "d02842cd8f7e9951bf90dee3885e4058332c970696edb4242a4af1a89aedbfff",
+        "wallet_address": "nano_1apj7hjfa8mztntax3j6rwhp9aqdkbhce9qouftw3jgtanfuih3u7k96rpk8",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_77",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "f65546d3eb3012d2f8167f7ed0834fb06aa8d970fab6addff4f7f3bf28ee862c",
+        "wallet_address": "nano_1j4c63i19ud9szcmmumfqnwbjimy7pk78mrxfaky45mp8rgyw7cbq9tebu5c",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_78",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "798bb9d5158e78e1671c923a996ad88cbe1b3bada4d2c02e72cb47d7d2ba4803",
+        "wallet_address": "nano_1hiwa44ifq71afeatgobfd1kr559aff7bheywdexwdg1npfo4o8ah6k9drd5",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_79",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "36913bf1ec7da882289473cb11c5890bc63d3da808cef6622cd5b8f3dedc7ee2",
+        "wallet_address": "nano_1he9q7pj45epsdaw938baisrynh5dtazjdyngdmiak8s1yhcutkzbb5pud9p",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_80",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "60f384088f87217df62104ced4f9e5d905884fcfb991a9789682317dc36748a2",
+        "wallet_address": "nano_184cyi1h75xdgd4w7pr7tggon87t7idtqdk5bb4zdhnbabtahcmerodbu71x",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_81",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "516b3221e526696f45097168b5636017fe3b78b9355e6ab2f5976fd53b1037ec",
+        "wallet_address": "nano_3tczcqitdy1cj4wbfb5441cx9gnmzfcu8cy1wh9mtantaa7udagjg5g4b1f3",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_82",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "99d5a5734ea4ece850d7ea81d66425f8eb2c11b24bbd51de997cc868e3cdc455",
+        "wallet_address": "nano_1qfh7qxztm5j1nhym7dhmd7nmgimou417oz8ydfkc8azm67rn5xwmi6rt5jd",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_83",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "8d7adb0328cf626ecd01ff90156233223d4fe79185273ef04942564c2ea51cf1",
+        "wallet_address": "nano_1yngkhd4sbio1b3gehjzhxrb7wc7x9mmrweenwn655k8sj6fkkx3383tnxc7",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_84",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "9487a6ebb1d656a75c0a47024591203e5df4ce898c015ab5f6eee51fedd67027",
+        "wallet_address": "nano_3dgdx9c8y36ikcsg4jsyxbxbe4ixj68d1d45hbyz4r7bypid1gwptcam71cd",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_85",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "189fee69ed1d21e91c01697a06f04fdd44163f2deeedbf916ea0e07bd568a156",
+        "wallet_address": "nano_11ohiswi86cegugyaf71zz88ij37f8r61kj7dskkdaf3copsgojt3pa97k7f",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_86",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "006d5123a95855bacd263581f2fb5160cd684d5c597b2fbef1f00bd270499661",
+        "wallet_address": "nano_3jgy3fxpkbxgtbp86nfwkuny4tbpim3qy6g1bwj8bd8jukjmjtgsqciajwys",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_87",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "9eed62da5664bfd8a6b3388f23eb21a94919d06fa36242d6721ee8cd2da348e9",
+        "wallet_address": "nano_1xgh6dsx6uxyhr5jibfscaknjhtn4bukhpgp86spg9xe5o8sqkx67d86dgqp",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_88",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "fe942995c6c849e89b0d14f6a9818ac7895585ce88f0378af6eba195991898d2",
+        "wallet_address": "nano_3wqurjxwsw77k6e1zaczid8abcxji5joxnie4mbk5raga4nrb94pw4szahkm",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_89",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "1dc057ea3014ac0d7267cc4bc85d0a524886fdabbd4b8acdc929c05efc41b9ee",
+        "wallet_address": "nano_343k5o6bmegsukof1pp3imdm6bbwhfg4h5pku4gre8shazjuuqrp4ccfnzcs",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_90",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "73e58aaa3af93964525b261a2250cbea02461396c02faf419b638dcb9f8d6502",
+        "wallet_address": "nano_31sa5a17hbbdg519e41gdd1tk1sejhhz18u3muiz8icttz8jqwk66915e1ze",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_91",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "5251e827c904eda0a949d1fb68b59572ee123e8f4fad52276d33d4239061a005",
+        "wallet_address": "nano_3mzgzf4f51yr6gkudp7gebg3mjw6opjbrdscoitgpiueqiprmshs7jsh8psh",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_92",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "8ab789ca7ca26bbb31601c37b17ba821978b034844493e26d23c84545c1255b9",
+        "wallet_address": "nano_17uwireepadu631aq1x5angtupukj1wg15r849mitsq8a1jkktyjanzcp9pt",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_93",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "a3e65c9f5ad6ae19c8aa634b58f295c01e08c1f956f9faa7f24cb42f03aeb383",
+        "wallet_address": "nano_17d6b45i35ux6srcq1tg1chfckw1k9gm1fns1hasx4foqrebp3pb3k1jfcuo",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_94",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "7390c80ef0cfda6aef2af078d639ec1b79626c8107cd4def0184c537e4177bff",
+        "wallet_address": "nano_1s6j3k5dr5srb59ot787g8eends76u91j7cf1fkedqzroei3akjyfmf8zxws",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_95",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "a036faf94ec0233fcbb88428df23261260caee6ba90e64c158daca7c8ca2bb16",
+        "wallet_address": "nano_3k3jsyxgu7f6i3tpdym3uwz8djtwmn7oaao43f3tu6i1k3w81zcddbpsb9td",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_96",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "8823deb72a353a582d6924435b705583331c04e1a68eecd05fc0401b796d5bcd",
+        "wallet_address": "nano_3sypdbmrabba3s1wyagmjjtactjczszw6h7d5buwsmiuthjnks1s5gtgsbp1",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_97",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "788925a57ff26917e43c065b7fcfafefd7aa1496584adbd0a18af4b89de3b4d9",
+        "wallet_address": "nano_1qy3ncduya53a9q37qhz3yxgggy9r11aist51ne35kjdk39kegmdqbrfq8sh",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_98",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "2a588e03807000205554b24ccbcbb87494d06e295ab465b4e9356b0f9570c02b",
+        "wallet_address": "nano_1quf6sr6iyina84h5tfqmnxdoq731kkbxasnu8bja7zebqcoteeqih65ucdp",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_99",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "14bfc4b827cac72448002f2103464a56f12438f27a502532805c511d43e9da7c",
+        "wallet_address": "nano_349wbg1jmiij9fcz9m3ohh91fnpsrs7rsthm1mnporjooiqf1finounag4hc",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    },
+    {
+        "name": "Worker_100",
+        "token": "AUTO",
+        "proxy": "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+        "wallet_seed": "0c92da7a0b92005ea1cae3e0f13245ec97074048a50fc2bbb2352476e1c74cca",
+        "wallet_address": "nano_1rbn5dth6hx4u69rhhisf6hch5nkwmy8ytk53yxemrm9qdbsmsnx85cus5dj",
+        "withdraw_threshold": 1000,
+        "earnings": 0
+    }
+]

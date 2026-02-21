@@ -1,0 +1,399 @@
+const nano = require('nanocurrency');
+const WebSocket = require('ws');
+const crypto = require('crypto');
+const axios = require('axios');
+const { HttpsProxyAgent } = require('https-proxy-agent');
+
+// Altcha PoW Solver
+function solveAltcha(salt, challenge, maxNumber = 10000000) {
+    console.log(`[POW] Solving challenge: ${challenge} with salt: ${salt}`);
+    const start = Date.now();
+    for (let i = 0; i <= maxNumber; i++) {
+        const hash = crypto.createHash('sha256').update(salt + i).digest('hex');
+        if (hash === challenge) {
+            const took = Date.now() - start;
+            console.log(`[POW] Solved in ${took}ms! Number: ${i}`);
+            return i;
+        }
+    }
+    return null;
+}
+
+const WS_URL = 'wss://api.thenanobutton.com/ws';
+const TURNSTILE_SERVER = 'http://127.0.0.1:3000/cf-clearance-scraper';
+
+class FastTapper {
+    constructor(sessionToken, proxy = null) {
+        this.sessionToken = sessionToken;
+        this.proxy = proxy;
+        this.ws = null;
+        this.tapInterval = null;
+        this.balance = 0;
+        this.sitekey = '0x4AAAAAACZpJ7kmZ3RsO1rU';
+        this.limitReached = false;
+        this.captchaSolving = false;
+        this.proxyWallet = null;
+        this.halted = false;
+        this.starting = false;
+        this._lastWithdrawalFailure = 0;
+    }
+
+    async generateProxyWallet() {
+        const seed = await nano.generateSeed();
+        const privateKey = nano.deriveSecretKey(seed, 0);
+        const publicKey = nano.derivePublicKey(privateKey);
+        const address = nano.deriveAddress(publicKey).replace('xrb_', 'nano_');
+        return { seed, address };
+    }
+
+    async start() {
+        if (this.starting) return;
+        this.starting = true;
+
+        if (this.proxy) {
+            const p = new URL(this.proxy);
+            console.log(`[INFO] Initializing worker bridge via proxy: ${p.protocol}//****:****@${p.host}`);
+        }
+
+        if (!this.sessionToken || this.sessionToken === 'AUTO') {
+            console.log('[INFO] Needs session token. Fetching new auto-session token...');
+            let fetched = false;
+            for (let attempt = 1; attempt <= 3 && !fetched; attempt++) {
+                try {
+                    const reqOpts = { timeout: 15000 };
+                    if (this.proxy) {
+                        reqOpts.httpsAgent = new HttpsProxyAgent(this.proxy);
+                    }
+                    const res = await axios.get('https://api.thenanobutton.com/api/session', reqOpts);
+                    this.sessionToken = res.data.token;
+                    console.log(`[INFO] Auto-session created: ${this.sessionToken.slice(0, 16)}...`);
+                    fetched = true;
+                } catch (e) {
+                    console.error(`[ERROR] Token fetch attempt ${attempt}/3 failed: ${e.message}`);
+                    if (attempt < 3) {
+                        console.log('[INFO] Retrying in 5 seconds...');
+                        await new Promise(r => setTimeout(r, 5000));
+                    }
+                }
+            }
+            if (!fetched) {
+                console.error('[FATAL] Could not fetch session token after 3 attempts. Exiting.');
+                process.exit(1);
+            }
+        }
+
+        // Initialize Proxy Wallet if we have a destination
+        if (this.withdrawAddress && !this.proxyWallet) {
+            this.proxyWallet = await this.generateProxyWallet();
+            console.log(`[INFO] Proxy Wallet generated for session: ${this.proxyWallet.address}`);
+        }
+
+        this.starting = false;
+        const urlWithToken = `${WS_URL}?token=${this.sessionToken}`;
+        console.log(`[INFO] Connecting to ${urlWithToken}...`);
+
+        const wsOptions = {
+            headers: {
+                'Origin': 'https://thenanobutton.com',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+            }
+        };
+
+        if (this.proxy) {
+            console.log(`[INFO] Using proxy: ${this.proxy}`);
+            wsOptions.agent = new HttpsProxyAgent(this.proxy);
+        }
+
+        this.ws = new WebSocket(urlWithToken, wsOptions);
+
+        this.ws.on('open', () => {
+            console.log('[WS] Connected!');
+            // Send initial registration if needed
+            this.ws.send(JSON.stringify({ type: 'session', token: this.sessionToken }));
+        });
+
+        this.ws.on('message', async (data) => {
+            const message = data.toString();
+            // console.log(`[WS RECV RAW] ${message}`);
+
+            try {
+                const json = JSON.parse(message);
+                if (json.type === 'captcha_required' || (json.session && json.session.captchaRequired)) {
+                    if (!this.captchaSolving) {
+                        this.captchaSolving = true;
+                        try {
+                            await this.handleCaptchaRequired();
+                        } finally {
+                            this.captchaSolving = false;
+                        }
+                    }
+                } else if (json.type === 'update' && json.balance !== undefined) {
+                    this.balance = json.balance;
+                    console.log(`[INFO] Current Balance: ${this.balance} Nano-units`);
+                } else if (json.type === 'limit' || json.type === 'hourly_limit') {
+                    const msg = json.message || 'Limit reached';
+                    console.log(`[ALERT] Rate limit reached: ${msg}. Reconnecting Proxy...`);
+                    this.ws.close();
+                }
+                else if (json.type === 'click') {
+                    console.log(`[INFO] Tap Success! Balance: ${json.currentNano} | Total Earned: ${json.totalEarned}`);
+                    this.checkAutoWithdraw(json.currentNano);
+                }
+            } catch (e) {
+                // Not JSON or unknown format
+                if (message === 'ping') {
+                    this.ws.send('pong');
+                } else if (message.includes('captcha_required')) {
+                    if (!this.captchaSolving) {
+                        this.captchaSolving = true;
+                        try {
+                            await this.handleCaptchaRequired();
+                        } finally {
+                            this.captchaSolving = false;
+                        }
+                    }
+                }
+            }
+        });
+
+        this.ws.on('error', (err) => {
+            console.error(`[WS ERROR] ${err.message}`);
+        });
+
+        this.ws.on('close', () => {
+            console.log('[WS] Disconnected.');
+            clearInterval(this.tapInterval);
+            if (!this.halted) {
+                console.log('[WS] Reconnecting in 5s...');
+                setTimeout(() => this.start(), 5000);
+            }
+        });
+
+        // Start tapping loop
+        this.tapInterval = setInterval(() => {
+            if (this.ws.readyState === WebSocket.OPEN && !this.captchaSolving && !this.limitReached && !this.withdrawing) {
+                this.ws.send('c');
+            }
+        }, 150);
+    }
+
+    async handleCaptchaRequired() {
+        // Cooldown: don't re-attempt CAPTCHA within 30 seconds of last attempt
+        const now = Date.now();
+        if (this._lastCaptchaAttempt && (now - this._lastCaptchaAttempt) < 30000) {
+            return;
+        }
+        this._lastCaptchaAttempt = now;
+
+        console.log('[INFO] CAPTCHA Required! Starting automated solving sequence...');
+
+        try {
+            // 1. Get Challenge from /api/c
+            console.log('[INFO] Fetching PoW challenge from /api/c...');
+            const challengeResponse = await axios.get('https://api.thenanobutton.com/api/c', {
+                timeout: 15000,
+                proxy: false,
+                httpsAgent: this.proxy ? new HttpsProxyAgent(this.proxy) : undefined
+            });
+
+            let payloadBase64 = challengeResponse.data;
+            if (typeof payloadBase64 === 'object' && payloadBase64.d) {
+                payloadBase64 = payloadBase64.d;
+            }
+
+            const challengeData = JSON.parse(Buffer.from(payloadBase64, 'base64').toString());
+            console.log(`[INFO] Received challenge: ${challengeData.c}`);
+
+            // 2. Solve PoW
+            const number = solveAltcha(challengeData.s, challengeData.c);
+            if (number === null) {
+                console.error('[ERROR] PoW solving failed - no solution found.');
+                return;
+            }
+
+            // 3. Get Turnstile token from local solver (with 60s timeout)
+            console.log('[INFO] Requesting Turnstile token from local server...');
+
+            let proxyObj = undefined;
+            if (this.proxy) {
+                try {
+                    const pUrl = new URL(this.proxy);
+                    proxyObj = {
+                        host: pUrl.hostname,
+                        port: parseInt(pUrl.port),
+                        username: pUrl.username,
+                        password: pUrl.password
+                    };
+                } catch (e) {
+                    console.log(`[WARN] Failed to parse proxy URL for local server: ${e.message}`);
+                }
+            }
+
+            const turnstileResponse = await axios.post(TURNSTILE_SERVER, {
+                mode: 'turnstile-max',
+                url: 'https://thenanobutton.com/',
+                siteKey: this.sitekey,
+                proxy: proxyObj
+            }, { timeout: 60000 });
+            const turnstileToken = turnstileResponse.data.token;
+
+            if (!turnstileToken) {
+                console.error('[ERROR] Turnstile solver returned empty token. Is cf-clearance-scraper running on port 3000?');
+                return;
+            }
+            console.log('[INFO] Received Turnstile token.');
+
+            // 4. Submit Verified Schema
+            const pObj = {
+                algorithm: challengeData.a,
+                challenge: challengeData.c,
+                number: number,
+                salt: challengeData.s,
+                signature: challengeData.g
+            };
+
+            const p = Buffer.from(JSON.stringify(pObj)).toString('base64');
+            console.log(`[DEBUG] Submitting solved CAPTCHA payload...`);
+
+            const verifyResponse = await axios.post('https://api.thenanobutton.com/api/captcha', {
+                token: this.sessionToken,
+                turnstileToken: turnstileToken,
+                p: p
+            }, {
+                timeout: 15000,
+                headers: {
+                    'Origin': 'https://thenanobutton.com',
+                    'Referer': 'https://thenanobutton.com/',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                    'Content-Type': 'application/json'
+                },
+                proxy: false,
+                httpsAgent: this.proxy ? new HttpsProxyAgent(this.proxy) : undefined
+            });
+
+            if (verifyResponse.status === 200 || verifyResponse.status === 204) {
+                console.log('[SUCCESS] CAPTCHA solved and verified! Resuming tapping...');
+            } else {
+                console.error(`[ERROR] CAPTCHA verification returned unexpected status: ${verifyResponse.status}`);
+            }
+        } catch (e) {
+            if (e.code === 'ECONNREFUSED') {
+                console.error('[ERROR] Turnstile solver is NOT running! Start cf-clearance-scraper on port 3000 first.');
+            } else {
+                console.error(`[ERROR] CAPTCHA solving sequence failed: ${e.message}`);
+            }
+            if (e.response) {
+                console.error(`[DEBUG] Response data: ${JSON.stringify(e.response.data)}`);
+            }
+        }
+    }
+
+    async checkAutoWithdraw(balance) {
+        if (!this.withdrawAddress || !this.withdrawThreshold) return;
+        if (this.withdrawing) return;
+
+        // 5-minute cooldown after a hard failure
+        const now = Date.now();
+        if (this._lastWithdrawalFailure && (now - this._lastWithdrawalFailure) < 300000) {
+            return;
+        }
+
+        if (balance >= this.withdrawThreshold) {
+            console.log(`[INFO] Threshold ${this.withdrawThreshold} reached. Pausing tapping for withdrawal...`);
+            this.withdrawing = true; // Set early to stop tapping interval immediately
+            await this.performWithdrawal();
+        }
+    }
+
+    async performWithdrawal(isRetry = false) {
+        const dest = this.proxyWallet ? this.proxyWallet.address : this.withdrawAddress;
+        const proxySeed = this.proxyWallet ? this.proxyWallet.seed : '';
+        const masterAddr = this.proxyWallet ? this.withdrawAddress : '';
+
+        // Add 0-30s jitter to avoid slamming the CAPTCHA solver when 100 bots hit threshold
+        if (!isRetry) {
+            const jitter = Math.floor(Math.random() * 30000);
+            console.log(`[INFO] Staggering withdrawal... Waiting ${Math.round(jitter / 1000)}s jitter to spread load.`);
+            await new Promise(r => setTimeout(r, jitter));
+        }
+
+        console.log(`[INFO] ${isRetry ? 'Retrying' : 'Triggering'} withdrawal to ${isRetry ? '(NEW) ' : ''}${dest}...`);
+        this.withdrawing = true;
+
+        return new Promise((resolve) => {
+            const { spawn } = require('child_process');
+            const withdrawProc = spawn('node', ['withdraw_nano.js', this.sessionToken, dest, this.proxy || '', proxySeed, masterAddr]);
+
+            withdrawProc.stdout.on('data', (d) => console.log(`[AUTO-WITHDRAW] ${d.toString().trim()}`));
+            withdrawProc.stderr.on('data', (d) => console.log(`[AUTO-WITHDRAW ERROR] ${d.toString().trim()}`));
+
+            withdrawProc.on('close', async (code) => {
+                console.log(`[AUTO-WITHDRAW] Process finished with code ${code}`);
+
+                if (code === 0) {
+                    console.log(`[SUCCESS] Withdrawal/Consolidation complete. Refreshing session...`);
+                    this.balance = 0;
+                    this.withdrawing = false;
+                    this._lastWithdrawalFailure = 0; // Clear cooldown on success
+
+                    // Force a full WebSocket refresh to reset server-side session state
+                    if (this.ws) {
+                        console.log(`[INFO] Forcing WebSocket refresh to sync post-withdrawal state.`);
+                        this.ws.close();
+                    }
+                } else if (!isRetry) {
+                    console.log(`[FALLBACK] Withdrawal failed. Generating a FRESH proxy wallet and retrying...`);
+                    this.proxyWallet = await this.generateProxyWallet();
+                    await this.performWithdrawal(true);
+                } else {
+                    console.log(`[ERROR] Withdrawal failed after retry. Entering 5-minute cooldown to prevent spam.`);
+                    this._lastWithdrawalFailure = Date.now();
+                    this.withdrawing = false;
+                }
+
+                resolve();
+            });
+        });
+    }
+}
+
+const token = process.argv[2] || 'YOUR_SESSION_TOKEN_HERE';
+const proxy = process.argv[3] || null;
+const address = process.argv[4] || null;
+const threshold = parseInt(process.argv[5]) || 0;
+
+const tapper = new FastTapper(token, proxy);
+tapper.withdrawAddress = address;
+tapper.withdrawThreshold = threshold;
+tapper.start();
+
+process.on('message', (msg) => {
+    if (msg.type === 'stop_and_sweep') {
+        tapper.halted = true;
+        clearInterval(tapper.tapInterval);
+        if (tapper.ws) tapper.ws.close();
+
+        if (!tapper.withdrawAddress) {
+            console.log(`[INFO] No sweep address configured. Terminating process immediately.`);
+            process.exit(0);
+        }
+
+        console.log(`[INFO] Terminate & Sweep signal received. Securing balance...`);
+        tapper.performWithdrawal().then(() => {
+            console.log(`[INFO] Sweep sequence complete. Terminating worker.`);
+            process.exit(0);
+        });
+    } else if (msg.type === 'withdraw') {
+        tapper.halted = true;
+        clearInterval(tapper.tapInterval);
+        if (tapper.ws) tapper.ws.close();
+
+        if (!tapper.withdrawAddress) {
+            console.error(`[ERROR] Cannot sweep: No withdrawAddress configured for this worker.`);
+            return;
+        }
+
+        console.log(`[INFO] Emergency sweep received. Initiating withdrawal...`);
+        tapper.performWithdrawal();
+    }
+});
