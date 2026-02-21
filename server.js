@@ -130,7 +130,7 @@ function startSolver() {
 
     solverProcess.stderr.on('data', (data) => {
         const msg = data.toString().trim();
-        console.error(`[SOLVER ERROR] ${msg}`);
+        console.error(`[SOLVER ERR] ${msg}`);
         io.emit('runner-log', { name: 'SYSTEM', msg: `[SOLVER ERROR] ${msg}` });
     });
 

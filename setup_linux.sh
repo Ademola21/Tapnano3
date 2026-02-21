@@ -20,8 +20,8 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # 3. Install Puppeteer Dependencies (Chrome requirements for Linux)
-echo "[3/6] Installing Puppeteer/Chrome system libraries..."
-sudo apt-get install -y libgbm-dev libnss3 libatk-bridge2.0-0 libgtk-3-0 libasound2 libxss1 libxdamage1 libxcomposite1 libpango-1.0-0 libcairo2 libcups2 libxkbcommon-x11-0
+echo "[3/6] Installing Puppeteer/Chrome system libraries, Chromium, and Xvfb..."
+sudo apt-get install -y libgbm-dev libnss3 libatk-bridge2.0-0 libgtk-3-0 libasound2 libxss1 libxdamage1 libxcomposite1 libpango-1.0-0 libcairo2 libcups2 libxkbcommon-x11-0 chromium-browser xvfb
 
 # 4. Install Project Dependencies
 echo "[4/6] Installing NPM packages..."

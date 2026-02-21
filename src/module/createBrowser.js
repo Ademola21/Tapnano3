@@ -11,7 +11,10 @@ async function createBrowser() {
         const browserConfig = {
             headless: isLinux ? true : false,
             turnstile: true,
-            connectOption: { defaultViewport: null },
+            connectOption: {
+                defaultViewport: null,
+                args: isLinux ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'] : []
+            },
             disableXvfb: false,
         };
 
@@ -19,6 +22,7 @@ async function createBrowser() {
             browserConfig.customConfig = { chromePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' };
         }
 
+        console.log(`[INFO] Launching Browser (Linux=${isLinux}, Headless=${browserConfig.headless})...`);
         const { browser, page } = await connect(browserConfig);
 
         try {
