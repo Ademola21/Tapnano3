@@ -438,6 +438,43 @@ io.on('connection', (socket) => {
         sweeper.stdout.on('data', (d) => io.emit('runner-log', { name: accountName, msg: d.toString() }));
         sweeper.on('close', () => io.emit('runner-log', { name: accountName, msg: 'Sweep complete.' }));
     });
+
+    socket.on('rescue-stale-sessions', () => {
+        console.log(`[RESCUE] Manual "Rescue Stale Sessions" triggered... scanning session database.`);
+        let rescuedCount = 0;
+        let rescuedAmount = 0;
+
+        Object.keys(activeSessions).forEach(name => {
+            const sess = activeSessions[name];
+            if (sess.earnings > 0 && sess.proxyWalletSeed) {
+                // Check if already in rescue vault by seed
+                const isRescued = rescuedWallets.some(w => w.seed === sess.proxyWalletSeed);
+                if (!isRescued) {
+                    const entry = {
+                        name: name,
+                        address: sess.proxyWalletAddress,
+                        seed: sess.proxyWalletSeed,
+                        balance: sess.earnings,
+                        rescuedAt: new Date().toISOString(),
+                        source: 'stale_session'
+                    };
+                    rescuedWallets.push(entry);
+                    rescuedCount++;
+                    rescuedAmount += sess.earnings;
+                    console.log(`[RESCUE] Salvaged ${name} (${sess.earnings} NANO) from stale session.`);
+                }
+            }
+        });
+
+        if (rescuedCount > 0) {
+            flushRescuedWallets();
+            const totalBalance = rescuedWallets.reduce((s, w) => s + (w.balance || 0), 0);
+            io.emit('rescue-updated', { count: rescuedWallets.length, totalBalance, wallets: rescuedWallets });
+            console.log(`[RESCUE] Successfully salvaged ${rescuedCount} accounts (${rescuedAmount} NANO total).`);
+        } else {
+            console.log(`[RESCUE] Scan complete. No new stale balances found.`);
+        }
+    });
 });
 
 // Batch State Sync for Dashboard UI Performance

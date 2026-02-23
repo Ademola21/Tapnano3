@@ -723,10 +723,16 @@ function App() {
                 These wallets received funds from the faucet but failed to consolidate to the master wallet. Their seeds are preserved here so you can recover the funds manually.
               </p>
 
-              <div className="flex gap-3 mb-6">
+              <div className="flex flex-wrap gap-3 mb-6">
+                <button
+                  onClick={() => socket.emit('rescue-stale-sessions')}
+                  className="flex-1 min-w-[200px] py-3 rounded-lg font-black tracking-widest uppercase transition-all flex items-center justify-center border bg-orange-500/20 text-orange-400 border-orange-500/50 hover:bg-orange-500/30 glow-orange cursor-pointer"
+                >
+                  <RefreshCcw className="mr-2 size-4" /> Rescue All Stale Balances
+                </button>
                 <a
                   href="/api/rescued-wallets/download"
-                  className={`flex-1 py-3 rounded-lg font-black tracking-widest uppercase transition-all flex items-center justify-center border ${rescuedWallets.length > 0
+                  className={`flex-1 min-w-[200px] py-3 rounded-lg font-black tracking-widest uppercase transition-all flex items-center justify-center border ${rescuedWallets.length > 0
                     ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50 hover:bg-cyan-500/30 glow-cyan cursor-pointer'
                     : 'bg-white/5 text-text-dim/30 border-white/5 cursor-not-allowed'
                     }`}
