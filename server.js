@@ -626,13 +626,24 @@ function startRunner(acc, autoWithdrawEnabled, withdrawLimit, mainWalletAddress)
 
     proc.on('close', (code) => {
         if (!runners[acc.name] || runners[acc.name].pid !== proc.pid) return; // Map might have been cleaned up or overwritten
-        if (runners[acc.name].status !== 'bridged') {
+
+        const wasBridged = runners[acc.name].status === 'bridged';
+        const earnings = runners[acc.name].earnings || 0;
+
+        if (!wasBridged) {
             runners[acc.name].status = 'stopped';
+            // EMERGENCY RESCUE: If worker exits with balance and NOT bridged, save to vault
+            if (earnings > 0) {
+                console.log(`[RESCUE] Worker ${acc.name} exited with ${earnings} NANO remaining. Securing to vault...`);
+                rescueWallet(acc.name);
+            }
         }
-        saveAccountState(acc.name, runners[acc.name].earnings);
+
+        saveAccountState(acc.name, earnings);
         io.emit('runner-status', { name: acc.name, status: runners[acc.name].status });
+
         // Clean up memory if stopped
-        if (runners[acc.name].status === 'stopped' || runners[acc.name].status === 'bridged') {
+        if (runners[acc.name].status === 'stopped' || wasBridged) {
             runners[acc.name].process = null;
         }
     });

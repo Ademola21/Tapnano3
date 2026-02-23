@@ -7,10 +7,10 @@
     "proxyPass": "c53czFZm6wpRETL",
     "referralCode": "Ademola",
     "referralEnabled": true,
-    "fleetPaused": true,
+    "fleetPaused": false,
     "activeFleet": {
         "targetSize": 0,
-        "autoWithdraw": true,
+        "autoWithdraw": false,
         "withdrawLimit": 0
     }
 }
