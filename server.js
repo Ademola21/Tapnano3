@@ -52,13 +52,19 @@ let allAccounts = []; // Cache for accounts.json
 let pendingLogs = []; // Global log buffer for dashboard
 let settings = {
     mainWalletAddress: "",
-    proxyMode: "brightdata",
-    proxyHost: "brd.superproxy.io",
-    proxyPort: "33335",
-    proxyUser: "brd-customer-hl_abe74837-zone-datacenter_proxy1",
-    proxyPass: "f0oh54nh9r33",
+    proxyMode: "manual",
+    proxyHost: "",
+    proxyPort: "",
+    proxyUser: "",
+    proxyPass: "",
     referralCode: "",
-    referralEnabled: false
+    referralEnabled: false,
+    fleetPaused: false,
+    activeFleet: {
+        targetSize: 0,
+        autoWithdraw: false,
+        withdrawLimit: 0
+    }
 };
 let solverProcess = null;
 let rescuedWallets = []; // Wallets that received funds but failed to consolidate
@@ -111,8 +117,35 @@ async function checkNodes() {
     io.emit('node-health', nodeHealth);
 }
 
+async function autoRecoverFleet() {
+    if (settings.activeFleet && settings.activeFleet.targetSize > 0) {
+        const { targetSize, autoWithdraw, withdrawLimit } = settings.activeFleet;
+        console.log(`[RECOVERY] Found active fleet invitation in settings (size: ${targetSize}). Recovering bots...`);
+
+        const accounts = await fillFleet(targetSize);
+        const sliced = accounts.slice(0, targetSize);
+
+        // Staggered launch to avoid resource spike
+        for (let i = 0; i < sliced.length; i++) {
+            const acc = sliced[i];
+            const baseProxy = acc.proxy || '';
+            const rotatedProxy = getRotatedProxy(baseProxy);
+            startRunner({ ...acc, proxy: rotatedProxy }, autoWithdraw, withdrawLimit, settings.mainWalletAddress);
+            await new Promise(r => setTimeout(r, 2000));
+        }
+        console.log(`[RECOVERY] Fleet recovery complete. Current status: ${settings.fleetPaused ? 'PAUSED' : 'RUNNING'}`);
+    }
+}
+
+// Initial node check and fleet recovery
+async function initServer() {
+    await checkNodes();
+    // Delay recovery slightly to ensure solver and other components are ready
+    setTimeout(autoRecoverFleet, 5000);
+}
+
+initServer();
 setInterval(checkNodes, 30000);
-checkNodes();
 
 function getAccounts() {
     return allAccounts;
@@ -208,18 +241,22 @@ function startSolver() {
 let sharedProxySessionId = require('crypto').randomBytes(4).toString('hex');
 
 function getRotatedProxy(baseProxy) {
-    if (!baseProxy) return '';
+    let proxy = baseProxy;
+    if (!proxy) {
+        // Fallback to global settings if no account-specific proxy is provided
+        proxy = `http://${settings.proxyUser}:${settings.proxyPass}@${settings.proxyHost}:${settings.proxyPort}`;
+    }
+
     try {
-        const url = new URL(baseProxy);
+        const url = new URL(proxy);
         if (url.hostname.includes('superproxy') || url.username.includes('brd-customer')) {
             // Strip any existing session ID and use the shared one
             url.username = url.username.replace(/-session-[^:@]*/i, '');
             url.username = `${url.username}-session-rand_${sharedProxySessionId}`;
+            return url.toString();
         }
-        return url.toString();
-    } catch (e) {
-        return baseProxy;
-    }
+    } catch (e) { }
+    return proxy;
 }
 
 function rotateSharedProxy() {
@@ -279,6 +316,14 @@ io.on('connection', (socket) => {
 
         const mainWalletAddress = payloadWallet || settings.mainWalletAddress;
 
+        // Persist fleet config for recovery
+        settings.activeFleet = {
+            targetSize,
+            autoWithdraw: autoWithdrawEnabled,
+            withdrawLimit
+        };
+        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4));
+
         // Ensure accounts exist (this also assigns proxies if available)
         const newAccounts = await fillFleet(targetSize);
         const slicedAccounts = newAccounts.slice(0, targetSize);
@@ -308,6 +353,36 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('pause-fleet', () => {
+        console.log(`[MASTER] Pausing all active workers...`);
+        settings.fleetPaused = true;
+        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4));
+        io.emit('settings-updated', settings);
+
+        Object.keys(runners).forEach(name => {
+            if (runners[name] && runners[name].process && runners[name].process.connected) {
+                runners[name].process.send({ type: 'pause' });
+                runners[name].status = 'paused';
+                io.emit('runner-status', { name, status: 'paused' });
+            }
+        });
+    });
+
+    socket.on('resume-fleet', () => {
+        console.log(`[MASTER] Resuming all active workers...`);
+        settings.fleetPaused = false;
+        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4));
+        io.emit('settings-updated', settings);
+
+        Object.keys(runners).forEach(name => {
+            if (runners[name] && runners[name].process && runners[name].process.connected) {
+                runners[name].process.send({ type: 'resume' });
+                runners[name].status = 'running';
+                io.emit('runner-status', { name, status: 'running' });
+            }
+        });
+    });
+
     socket.on('stop-fleet', async () => {
         console.log(`[MASTER] Staggered halt sequence initiated... securely dumping worker balances...`);
         const names = Object.keys(runners);
@@ -315,6 +390,12 @@ io.on('connection', (socket) => {
             io.emit('runner-log', { name, msg: 'Halt Fleet signal received. Initiating final sweep...' });
             stopRunner(name, true);
             await new Promise(r => setTimeout(r, 4000)); // Stagger sweep out to prevent ratelimits
+        }
+
+        // Clear active fleet config
+        if (settings.activeFleet) {
+            settings.activeFleet.targetSize = 0;
+            fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4));
         }
         // When stopping fleet, keep the accounts visible but mark as stopped
         const stoppedAccounts = getAccounts().filter(a => names.includes(a.name));
@@ -442,11 +523,18 @@ function startRunner(acc, autoWithdrawEnabled, withdrawLimit, mainWalletAddress)
         }
     });
 
+    // If fleet is currently paused, tell the new worker immediately
+    if (settings.fleetPaused) {
+        runners[acc.name].status = 'paused';
+        setTimeout(() => {
+            if (proc.connected) proc.send({ type: 'pause' });
+        }, 2000);
+    }
+
     proc.stdout.on('data', (data) => {
         if (!runners[acc.name]) return; // Safety check
         const rawData = data.toString();
 
-        // --- HIGH PERFORMANCE LOG PARSING ---
         // Using fast string checks instead of regex/split on every tick saves ~80% CPU overhead
         if (rawData.indexOf('Balance:') !== -1 || rawData.indexOf('Tap Success!') !== -1) {
             // Only use balance hook if it's there

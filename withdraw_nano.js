@@ -46,28 +46,33 @@ async function getBalance() {
 }
 
 async function solveTurnstile() {
-    console.log('[INFO] Solving CAPTCHA (Turnstile-Max: Authentic Site Context)...');
-    let proxyObj = undefined;
-    if (proxy) {
+    // Retry CAPTCHA solve up to 3 times
+    for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-            const u = new URL(proxy);
-            proxyObj = { host: u.hostname, port: parseInt(u.port), username: u.username, password: u.password };
-        } catch (e) { }
+            console.log(`[INFO] Solving CAPTCHA attempt ${attempt}/3 (direct, no proxy)...`);
+            const res = await axios.post(TURNSTILE_SERVER, {
+                mode: 'turnstile-max',
+                url: 'https://thenanobutton.com/',
+                siteKey: '0x4AAAAAACZpJ7kmZ3RsO1rU'
+            }, { timeout: 180000 });
+            if (res.data && res.data.token) return res.data.token;
+            throw new Error(res.data.message || 'Solver returned empty token');
+        } catch (e) {
+            console.error(`[WARN] CAPTCHA attempt ${attempt}/3 failed: ${e.message}`);
+            if (attempt < 3) {
+                console.log('[INFO] Retrying CAPTCHA in 5s...');
+                await new Promise(r => setTimeout(r, 5000));
+            } else {
+                throw new Error(`CAPTCHA failed after 3 attempts: ${e.message}`);
+            }
+        }
     }
-    const res = await axios.post(TURNSTILE_SERVER, {
-        mode: 'turnstile-max',
-        url: 'https://thenanobutton.com/',
-        siteKey: '0x4AAAAAACZpJ7kmZ3RsO1rU',
-        proxy: proxyObj
-    }, { timeout: 70000 });
-    if (res.data && res.data.token) return res.data.token;
-    throw new Error(res.data.message || 'Solver empty');
 }
 
 async function withdraw(amount) {
     let currentToken = null;
     let attempts = 0;
-    const maxAttempts = 6;
+    const maxAttempts = 10;
 
     while (attempts < maxAttempts) {
         attempts++;
@@ -100,14 +105,19 @@ async function withdraw(amount) {
             if (isCaptcha) {
                 console.log('[ALERT] API requested CAPTCHA.');
                 if (currentToken) {
-                    console.error('[ERROR] Token was rejected. Context mismatch or flagged IP.');
-                    return false; // Token failed, don't loop forever
+                    console.log('[WARN] Token was rejected. Getting a fresh token...');
+                    currentToken = null; // Clear rejected token
                 }
                 try {
                     currentToken = await solveTurnstile();
                     continue; // Loop again with the new token
                 } catch (err) {
                     console.error(`[ERROR] Solver failed: ${err.message}`);
+                    if (attempts < maxAttempts) {
+                        console.log('[INFO] Will retry withdrawal in 10s...');
+                        await new Promise(r => setTimeout(r, 10000));
+                        continue;
+                    }
                     return false;
                 }
             }

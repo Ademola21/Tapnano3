@@ -28,9 +28,8 @@ async function ensureWallets() {
             updated = true;
         }
 
-        // Fix legacy placeholders
-        if (acc.proxy === 'REPLACE_WITH_YOUR_PROXY' || !acc.proxy) {
-            acc.proxy = 'http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335';
+        if (acc.proxy === 'REPLACE_WITH_YOUR_PROXY') {
+            acc.proxy = '';
             updated = true;
         }
 
@@ -67,7 +66,7 @@ async function fillFleet(targetSize) {
         accounts.push({
             name: `Worker_${autoCount}`,
             token: "AUTO",
-            proxy: "http://brd-customer-hl_abe74837-zone-datacenter_proxy1:f0oh54nh9r33@brd.superproxy.io:33335",
+            proxy: "",
             wallet_seed: wallet.seed,
             wallet_address: wallet.address,
             withdraw_threshold: 0,

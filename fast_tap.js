@@ -35,6 +35,7 @@ class FastTapper {
         this.proxyWallet = null;
         this.halted = false;
         this.starting = false;
+        this.isPaused = false;
         this._lastWithdrawalFailure = 0;
     }
 
@@ -312,6 +313,10 @@ class FastTapper {
                         }
                     }, 15000);
                 } else {
+                    if (this.isPaused) {
+                        console.log('[FLEET] ⏸️ Paused — Reconnection loop suspended until Resume.');
+                        return;
+                    }
                     console.log('[WS] Reconnecting in 5s...');
                     setTimeout(() => this.start(), 5000);
                 }
@@ -320,13 +325,17 @@ class FastTapper {
 
         // Start tapping loop
         this.tapInterval = setInterval(() => {
-            if (this.ws.readyState === WebSocket.OPEN && !this.captchaSolving && !this.limitReached && !this.withdrawing) {
+            if (this.ws.readyState === WebSocket.OPEN && !this.captchaSolving && !this.limitReached && !this.withdrawing && !this.isPaused) {
                 this.ws.send('c');
             }
         }, 150);
     }
 
     async handleCaptchaRequired() {
+        if (this.isPaused) {
+            console.log('[FLEET] ⏸️ CAPTCHA required but fleet is paused. Skipping solve sequence.');
+            return;
+        }
         // Cooldown: don't re-attempt CAPTCHA within 30 seconds of last attempt
         const now = Date.now();
         if (this._lastCaptchaAttempt && (now - this._lastCaptchaAttempt) < 30000) {
@@ -361,8 +370,10 @@ class FastTapper {
             }
 
             // 3. Get Turnstile token from local solver (with 60s timeout)
-            // NOTE: Solver uses DIRECT internet (no proxy) to save bandwidth.
-            // Turnstile tokens are site-specific, not IP-specific.
+            if (this.isPaused) {
+                console.log('[FLEET] ⏸️ Paused — Aborting CAPTCHA solve before Turnstile call.');
+                return;
+            }
             console.log('[INFO] Requesting Turnstile token from local server (direct, no proxy)...');
 
             const turnstileResponse = await axios.post(TURNSTILE_SERVER, {
@@ -424,6 +435,7 @@ class FastTapper {
     }
 
     async checkAutoWithdraw(balance) {
+        if (this.isPaused) return;
         if (!this.withdrawAddress || !this.withdrawThreshold) return;
         if (this.withdrawing) return;
 
@@ -506,7 +518,18 @@ tapper.withdrawThreshold = threshold;
 tapper.start();
 
 process.on('message', (msg) => {
-    if (msg.type === 'stop_and_sweep') {
+    if (msg.type === 'pause') {
+        console.log('[FLEET] ⏸️ PAUSE signal received from server.');
+        tapper.isPaused = true;
+    } else if (msg.type === 'resume') {
+        console.log('[FLEET] ▶️ RESUME signal received from server.');
+        tapper.isPaused = false;
+        // Trigger reconnection if we dropped while paused
+        if (!tapper.ws || tapper.ws.readyState === WebSocket.CLOSED || tapper.ws.readyState === WebSocket.CLOSING) {
+            console.log('[FLEET] Re-establishing connection on resume...');
+            tapper.start();
+        }
+    } else if (msg.type === 'stop_and_sweep') {
         tapper.halted = true;
         clearInterval(tapper.tapInterval);
         if (tapper.ws) tapper.ws.close();
@@ -523,17 +546,8 @@ process.on('message', (msg) => {
             process.exit(0);
         });
     } else if (msg.type === 'withdraw') {
-        tapper.halted = true;
-        clearInterval(tapper.tapInterval);
-        if (tapper.ws) tapper.ws.close();
-
-        if (!tapper.withdrawAddress) {
-            console.error(`[ERROR] Cannot sweep: No withdrawAddress configured for this worker.`);
-            return;
-        }
-
-        console.log(`[INFO] Emergency sweep received. Initiating withdrawal...`);
-        tapper.performWithdrawal();
+        console.log('[SIGNAL] Withdrawal signal received.');
+        tapper.checkAutoWithdraw(tapper.balance + 1000); // Trigger withdrawal
     } else if (msg.type === 'rotate-proxy') {
         // Server is telling us to rotate to a new shared IP
         const newSessionId = msg.newSessionId;

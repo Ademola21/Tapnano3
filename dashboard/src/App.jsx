@@ -27,11 +27,11 @@ function App() {
   const [runners, setRunners] = useState({});
   const [nodeHealth, setNodeHealth] = useState({});
   const [mainWalletAddress, setMainWalletAddress] = useState('');
-  const [proxyHost, setProxyHost] = useState('brd.superproxy.io');
-  const [proxyPort, setProxyPort] = useState('33335');
-  const [proxyUser, setProxyUser] = useState('brd-customer-hl_abe74837-zone-datacenter_proxy1');
-  const [proxyPass, setProxyPass] = useState('f0oh54nh9r33');
-  const [proxyMode, setProxyMode] = useState('brightdata');
+  const [proxyHost, setProxyHost] = useState('');
+  const [proxyPort, setProxyPort] = useState('');
+  const [proxyUser, setProxyUser] = useState('');
+  const [proxyPass, setProxyPass] = useState('');
+  const [proxyMode, setProxyMode] = useState('manual');
   const [editProxy, setEditProxy] = useState(false);
   const [editWallet, setEditWallet] = useState(false);
   const [globalStats, setGlobalStats] = useState({ totalEarned: 0, activeCount: 0 });
@@ -41,6 +41,7 @@ function App() {
   const [rescuedTotal, setRescuedTotal] = useState(0);
   const [referralCode, setReferralCode] = useState('');
   const [referralEnabled, setReferralEnabled] = useState(false);
+  const [fleetPaused, setFleetPaused] = useState(false);
 
   // Config State
   const [activeTab, setActiveTab] = useState('execution');
@@ -66,6 +67,7 @@ function App() {
         setProxyPass(settings.proxyPass || '');
         setReferralCode(settings.referralCode || '');
         setReferralEnabled(settings.referralEnabled || false);
+        setFleetPaused(settings.fleetPaused || false);
       }
       if (rescued) {
         setRescuedWallets(rescued.wallets || []);
@@ -80,6 +82,7 @@ function App() {
       setProxyPort(s.proxyPort || '');
       setProxyUser(s.proxyUser || '');
       setProxyPass(s.proxyPass || '');
+      setFleetPaused(s.fleetPaused || false);
     });
 
     socket.on('runner-status', ({ name, status }) => {
@@ -167,13 +170,15 @@ function App() {
 
   const stopFleet = () => socket.emit('stop-fleet');
   const sweepAll = () => socket.emit('sweep-all', mainWalletAddress);
+  const pauseFleet = () => socket.emit('pause-fleet');
+  const resumeFleet = () => socket.emit('resume-fleet');
 
   const formatNano = (val) => {
     const num = parseFloat(val) || 0;
     return num.toFixed(8);
   };
 
-  const activeRunnersCount = Object.values(runners).filter(r => r.status === 'running').length;
+  const activeRunnersCount = Object.values(runners).filter(r => r.status === 'running' || r.status === 'paused').length;
   const isRunning = activeRunnersCount > 0;
 
   const totalEarned = accounts.reduce((sum, acc) => sum + (parseFloat(acc.earnings) || 0), 0);
@@ -266,10 +271,10 @@ function App() {
                     onClick={() => {
                       if (!editProxy) return;
                       setProxyMode('brightdata');
-                      setProxyHost('brd.superproxy.io');
-                      setProxyPort('33335');
-                      setProxyUser('brd-customer-hl_abe74837-zone-datacenter_proxy1');
-                      setProxyPass('f0oh54nh9r33');
+                      setProxyHost('');
+                      setProxyPort('');
+                      setProxyUser('');
+                      setProxyPass('');
                     }}
                     className={`flex-1 py-2 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all border ${proxyMode === 'brightdata'
                       ? 'bg-orange-500/20 text-orange-400 border-orange-500/50'
@@ -449,12 +454,29 @@ function App() {
               <div className="pt-4">
                 {isRunning ? (
                   <>
-                    <button
-                      onClick={stopFleet}
-                      className="w-full py-4 rounded-xl font-black tracking-widest uppercase bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30 transition-all flex items-center justify-center glow-red"
-                    >
-                      <Square className="mr-2 size-5" /> Halt Fleet Execution
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={stopFleet}
+                        className="flex-1 py-4 rounded-xl font-black tracking-widest uppercase bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30 transition-all flex items-center justify-center glow-red"
+                      >
+                        <Square className="mr-2 size-5" /> Halt Fleet
+                      </button>
+                      {fleetPaused ? (
+                        <button
+                          onClick={resumeFleet}
+                          className="flex-1 py-4 rounded-xl font-black tracking-widest uppercase bg-green-500/20 text-green-400 border border-green-500/50 hover:bg-green-500/30 transition-all flex items-center justify-center glow-green shadow-[0_0_15px_rgba(34,197,94,0.1)]"
+                        >
+                          <Play className="mr-2 size-5" /> Resume
+                        </button>
+                      ) : (
+                        <button
+                          onClick={pauseFleet}
+                          className="flex-1 py-4 rounded-xl font-black tracking-widest uppercase bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 hover:bg-yellow-500/30 transition-all flex items-center justify-center glow-yellow shadow-[0_0_15px_rgba(234,179,8,0.1)]"
+                        >
+                          <Square className="mr-2 size-5" /> Pause
+                        </button>
+                      )}
+                    </div>
                     <button
                       onClick={() => socket.emit('sweep-active')}
                       className="w-full mt-4 py-4 rounded-xl font-black tracking-widest uppercase bg-green-500/20 text-green-400 border border-green-500/50 hover:bg-green-500/30 transition-all flex items-center justify-center glow-green"
@@ -463,12 +485,23 @@ function App() {
                     </button>
                   </>
                 ) : (
-                  <button
-                    onClick={startFleet}
-                    className="w-full py-4 rounded-xl font-black tracking-widest uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:bg-cyan-500/30 transition-all flex items-center justify-center glow-cyan"
-                  >
-                    <Power className="mr-2 size-5" /> Initialize Fleet
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={startFleet}
+                      className="flex-1 py-3 px-4 rounded-lg text-[10px] font-black tracking-widest uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:bg-cyan-500/30 transition-all flex items-center justify-center glow-cyan"
+                    >
+                      <Power className="mr-2 size-5" /> Initialize Fleet
+                    </button>
+
+                    {Object.keys(runners).length > 0 && fleetPaused && (
+                      <button
+                        onClick={resumeFleet}
+                        className="flex-1 py-3 px-4 rounded-lg text-[10px] font-black tracking-widest uppercase bg-green-500/20 text-green-400 border border-green-500/50 hover:bg-green-500/30 transition-all flex items-center justify-center glow-green"
+                      >
+                        <Play className="mr-2 size-5" /> Resume Fleet
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </section>

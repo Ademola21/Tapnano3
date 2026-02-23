@@ -6,5 +6,11 @@
     "proxyUser": "SS1iJfvdcx",
     "proxyPass": "c53czFZm6wpRETL",
     "referralCode": "Ademola",
-    "referralEnabled": true
+    "referralEnabled": true,
+    "fleetPaused": true,
+    "activeFleet": {
+        "targetSize": 10,
+        "autoWithdraw": true,
+        "withdrawLimit": 0
+    }
 }
