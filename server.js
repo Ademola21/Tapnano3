@@ -62,11 +62,14 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard/dist/index.html'));
 });
 
-// State
+// State Management
 let runners = {}; // { accountName: { process, status, logs[] } }
 let nodeHealth = {};
 let allAccounts = []; // Cache for accounts.json
 let pendingLogs = []; // Global log buffer for dashboard
+let activeSessions = {}; // Storage for account session tokens and proxy wallets
+let rescuedWallets = []; // Wallets that received funds but failed to consolidate
+let solverProcess = null;
 let settings = {
     mainWalletAddress: "",
     proxyMode: "manual",
@@ -84,9 +87,6 @@ let settings = {
     },
     turnstileSolverUrl: "http://localhost:3000"
 };
-let solverProcess = null;
-let rescuedWallets = []; // Wallets that received funds but failed to consolidate
-let activeSessions = {}; // Storage for account session tokens and proxy wallets
 
 function flushSessions() {
     try {

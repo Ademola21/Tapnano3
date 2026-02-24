@@ -9,6 +9,17 @@
 set -e
 echo "🚀 Starting Dedicated Worker Setup..."
 
+# Fresh Install Toggle
+if [[ "$1" == "--fresh" ]]; then
+    echo "🧹 --- FRESH INSTALL REQUESTED --- 🧹"
+    echo "Killing all node/pm2 processes and wiping old Tapnano2 files..."
+    pm2 delete all 2>/dev/null || true
+    killall node 2>/dev/null || true
+    # We stay in current dir if script is there, but wipe contents
+    find . -maxdepth 1 ! -name "$(basename "$0")" ! -name "." -exec rm -rf {} +
+    echo "Done. Proceeding with clean install..."
+fi
+
 # 1. Update & Basic Tools
 echo "[1/6] Updating system packages..."
 sudo apt-get update -y && sudo apt-get upgrade -y
