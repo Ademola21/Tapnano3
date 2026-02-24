@@ -62,15 +62,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard/dist/index.html'));
 });
 
-// State Management (Explicitly Global to prevent ReferenceErrors in callbacks/timeouts)
-global.runners = {}; // { accountName: { process, status, logs[] } }
-global.nodeHealth = {};
-global.allAccounts = []; // Cache for accounts.json
-global.pendingLogs = []; // Global log buffer for dashboard
-global.activeSessions = {}; // Storage for account session tokens and proxy wallets
-global.rescuedWallets = []; // Wallets that received funds but failed to consolidate
-global.solverProcess = null;
-global.settings = {
+// State Management (Absolute Top-Level for safe access in timeouts/callbacks)
+let runners = {}; // { accountName: { process, status, logs[] } }
+let nodeHealth = {};
+let allAccounts = []; // Cache for accounts.json
+let pendingLogs = []; // Global log buffer for dashboard
+let activeSessions = {}; // Storage for account session tokens and proxy wallets
+let rescuedWallets = []; // Wallets that received funds but failed to consolidate
+let solverProcess = null;
+let settings = {
     mainWalletAddress: "",
     proxyMode: "manual",
     proxyHost: "",
@@ -87,14 +87,6 @@ global.settings = {
     },
     turnstileSolverUrl: "http://localhost:3000"
 };
-
-// Map local shorthand for readability in existing logic
-const runners = global.runners;
-const nodeHealth = global.nodeHealth;
-const pendingLogs = global.pendingLogs;
-const activeSessions = global.activeSessions;
-const rescuedWallets = global.rescuedWallets;
-let settings = global.settings;
 
 function flushSessions() {
     try {
