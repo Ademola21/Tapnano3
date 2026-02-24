@@ -5,25 +5,28 @@ async function createBrowser() {
 
         global.browser = null
 
-        // console.log('Launching the browser...');
-
         const isLinux = process.platform === 'linux';
+
+        // Use a persistent but unique profile dir to avoid lock files and ensure bypasses stick
+        const profilePath = isLinux ? `/tmp/chrome-profile-${process.pid}` : undefined;
+
         const browserConfig = {
             headless: false, // Must be false for Turnstile — Xvfb handles display on Linux
             turnstile: true,
             connectOption: {
                 defaultViewport: null,
-                args: isLinux ? [
+                args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
                     '--disable-dev-shm-usage',
                     '--disable-web-security',
                     '--disable-site-isolation',
                     '--disable-site-isolation-trials',
-                    '--disable-features=TrackingPrevention,EdgeTrackingPrevention,IsolateOrigins,site-per-process,site-isolation-trials',
+                    '--disable-features=IsolateOrigins,site-per-process,TrackingPrevention,EdgeTrackingPrevention',
                     '--test-type',
                     '--disable-blink-features=AutomationControlled',
                     '--ignore-certificate-errors',
+                    '--allow-running-insecure-content',
                     '--no-first-run',
                     '--no-service-autorun',
                     '--password-store=basic',
@@ -35,29 +38,15 @@ async function createBrowser() {
                     '--disable-component-update',
                     '--use-gl=swiftshader',
                     '--disable-gpu',
-                    '--window-size=1280,720',
-                    `--user-data-dir=/tmp/chrome-solver-${process.pid}`
-                ] : [
-                    '--disable-blink-features=AutomationControlled',
-                    '--no-first-run',
-                    '--no-service-autorun',
-                    '--password-store=basic',
-                    '--use-mock-keychain',
-                    '--ignore-certificate-errors',
-                    '--disable-web-security',
-                    '--disable-site-isolation',
-                    '--disable-site-isolation-trials',
-                    '--disable-features=TrackingPrevention,EdgeTrackingPrevention,IsolateOrigins,site-per-process',
-                    '--test-type',
-                    '--disable-background-networking',
-                    '--disable-default-apps',
-                    '--disable-sync',
-                    '--disable-extensions',
-                    '--disable-component-update'
+                    '--window-size=1280,720'
                 ]
             },
             disableXvfb: false,
         };
+
+        if (profilePath) {
+            browserConfig.connectOption.args.push(`--user-data-dir=${profilePath}`);
+        }
 
         if (!isLinux) {
             browserConfig.customConfig = { chromePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' };
@@ -94,23 +83,10 @@ async function createBrowser() {
                     windowId,
                     bounds: { windowState: 'minimized' }
                 });
-                const pages = await browser.pages();
-                for (const p of pages) {
-                    try {
-                        const s = await p.target().createCDPSession();
-                        const { windowId: wid } = await s.send('Browser.getWindowForTarget');
-                        await s.send('Browser.setWindowBounds', {
-                            windowId: wid,
-                            bounds: { windowState: 'minimized' }
-                        });
-                    } catch (err) { }
-                }
             } catch (e) {
                 console.log("Failed to minimize initial window", e.message);
             }
         }
-
-        // console.log('Browser launched');
 
         global.browser = browser;
 

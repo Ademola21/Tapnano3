@@ -15,9 +15,9 @@ if [[ "$1" == "--fresh" ]]; then
     echo "Killing all node/pm2 processes and wiping old Tapnano2 files..."
     pm2 delete all 2>/dev/null || true
     killall node 2>/dev/null || true
-    # We stay in current dir if script is there, but wipe contents
-    find . -maxdepth 1 ! -name "$(basename "$0")" ! -name "." -exec rm -rf {} +
-    echo "Done. Proceeding with clean install..."
+    # Wipe state files that might have been tracked or left over
+    rm -f settings.json accounts.json active_sessions.json rescued_wallets.json
+    echo "State wiped. Proceeding with clean install..."
 fi
 
 # 1. Update & Basic Tools
