@@ -72,6 +72,7 @@ let settings = {
 };
 let solverProcess = null;
 let rescuedWallets = []; // Wallets that received funds but failed to consolidate
+let activeSessions = {}; // Storage for account session tokens and proxy wallets
 
 function flushSessions() {
     try {
