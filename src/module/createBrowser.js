@@ -19,7 +19,7 @@ async function createBrowser() {
                     '--disable-dev-shm-usage',
                     '--disable-web-security',
                     '--disable-site-isolation-trials',
-                    '--disable-features=TrackingPrevention,EdgeTrackingPrevention,IsolateOrigins,site-per-process',
+                    '--disable-features=TrackingPrevention,EdgeTrackingPrevention,IsolateOrigins,site-per-process,site-isolation-trials',
                     '--disable-blink-features=AutomationControlled',
                     '--ignore-certificate-errors',
                     '--no-first-run',
@@ -32,7 +32,9 @@ async function createBrowser() {
                     '--disable-extensions',
                     '--disable-component-update',
                     '--use-gl=swiftshader',
-                    '--window-size=1280,720'
+                    '--disable-gpu',
+                    '--window-size=1280,720',
+                    `--user-data-dir=/tmp/chrome-solver-${process.pid}`
                 ] : [
                     '--disable-blink-features=AutomationControlled',
                     '--no-first-run',

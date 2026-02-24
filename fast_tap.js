@@ -469,7 +469,8 @@ class FastTapper {
 
         return new Promise((resolve) => {
             const { spawn } = require('child_process');
-            const withdrawProc = spawn('node', ['withdraw_nano.js', this.sessionToken, dest, this.proxy || '', proxySeed, masterAddr]);
+            const args = ['withdraw_nano.js', this.sessionToken, dest, this.proxy || '', proxySeed, masterAddr, global.remoteSolverUrl || ''];
+            const withdrawProc = spawn('node', args);
 
             withdrawProc.stdout.on('data', (d) => console.log(`[AUTO-WITHDRAW] ${d.toString().trim()}`));
             withdrawProc.stderr.on('data', (d) => console.log(`[AUTO-WITHDRAW ERROR] ${d.toString().trim()}`));
@@ -514,6 +515,7 @@ const savedWalletAddr = process.argv[8] || '';
 const remoteSolverUrl = process.argv[9] || null;
 
 if (remoteSolverUrl) {
+    global.remoteSolverUrl = remoteSolverUrl;
     TURNSTILE_SERVER = remoteSolverUrl;
     // Append /cf-clearance-scraper if not present to match the expected endpoint
     if (!TURNSTILE_SERVER.includes('/cf-clearance-scraper')) {

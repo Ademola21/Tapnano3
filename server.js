@@ -10,6 +10,24 @@ const { createWallet, ensureWallets, fillFleet } = require('./wallet_mgr');
 
 const isSolverOnly = process.argv.includes('--solver-only');
 const isWorkerOnly = process.argv.includes('--worker-only');
+const ACCOUNTS_FILE = path.join(__dirname, 'accounts.json');
+const SETTINGS_FILE = path.join(__dirname, 'settings.json');
+const RESCUED_FILE = path.join(__dirname, 'rescued_wallets.json');
+const SESSIONS_FILE = path.join(__dirname, 'active_sessions.json');
+
+const isFresh = process.argv.includes('--fresh');
+if (isFresh) {
+    console.log("[INIT] 🧹 --- FRESH START TRIGGERED --- 🧹");
+    const filesToWipe = [ACCOUNTS_FILE, SETTINGS_FILE, RESCUED_FILE, SESSIONS_FILE];
+    filesToWipe.forEach(f => {
+        if (fs.existsSync(f)) {
+            try {
+                fs.unlinkSync(f);
+                console.log(`[INIT] Deleted: ${path.basename(f)}`);
+            } catch (e) { console.error(`[ERR] Failed to delete ${f}:`, e.message); }
+        }
+    });
+}
 
 // Global Safety Shields
 process.on('uncaughtException', (err) => {
@@ -26,10 +44,6 @@ const io = new Server(server, {
 });
 
 const PORT = 4000;
-const ACCOUNTS_FILE = path.join(__dirname, 'accounts.json');
-const SETTINGS_FILE = path.join(__dirname, 'settings.json');
-const RESCUED_FILE = path.join(__dirname, 'rescued_wallets.json');
-const SESSIONS_FILE = path.join(__dirname, 'active_sessions.json');
 const NODES = [
     'https://rainstorm.city/api',
     'https://node.somenano.com/proxy',

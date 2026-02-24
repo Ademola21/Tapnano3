@@ -8,15 +8,20 @@ const nanoAddress = process.argv[3];
 const proxy = process.argv[4] || null;
 const proxySeed = process.argv[5] || null;
 const masterAddress = process.argv[6] || null;
+const remoteSolverUrl = process.argv[7] || null;
 
 if (!sessionToken || !nanoAddress) {
-    console.log('Usage: node withdraw_nano.js <session_token> <nano_address> [proxy] [proxy_seed] [master_address]');
+    console.log('Usage: node withdraw_nano.js <session_token> <nano_address> [proxy] [proxy_seed] [master_address] [remote_solver_url]');
     process.exit(1);
 }
 
 const WS_URL = `wss://api.thenanobutton.com/ws?token=${sessionToken}`;
 const API_WITHDRAW = 'https://api.thenanobutton.com/api/withdraw';
-const TURNSTILE_SERVER = 'http://127.0.0.1:3000/cf-clearance-scraper';
+let TURNSTILE_SERVER = remoteSolverUrl || 'http://127.0.0.1:3000/cf-clearance-scraper';
+
+if (remoteSolverUrl && !TURNSTILE_SERVER.includes('/cf-clearance-scraper')) {
+    TURNSTILE_SERVER = TURNSTILE_SERVER.replace(/\/+$/, '') + '/cf-clearance-scraper';
+}
 
 async function getBalance() {
     let attempts = 0;
