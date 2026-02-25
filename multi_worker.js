@@ -26,7 +26,12 @@ async function init() {
         // Wait a small bit between spawns to avoid slamming the session API
         await new Promise(r => setTimeout(r, 200));
 
-        const tapper = new FastTapper(acc.sessionToken || 'AUTO', acc.proxy || globalConfig.defaultProxy, globalConfig.referralCode || '');
+        const tapper = new FastTapper(
+            acc.sessionToken || 'AUTO',
+            acc.proxy || globalConfig.defaultProxy,
+            globalConfig.referralCode || '',
+            globalConfig.turnstileSolverUrl || 'http://127.0.0.1:3000'
+        );
         tapper.name = acc.name;
         tapper.withdrawAddress = globalConfig.mainWalletAddress;
         tapper.withdrawThreshold = globalConfig.withdrawThreshold;

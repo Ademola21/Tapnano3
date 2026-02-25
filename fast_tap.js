@@ -20,13 +20,16 @@ function solveAltcha(salt, challenge, maxNumber = 10000000) {
 }
 
 const WS_URL = 'wss://api.thenanobutton.com/ws';
-let TURNSTILE_SERVER = 'http://127.0.0.1:3000/cf-clearance-scraper';
 
 class FastTapper {
-    constructor(sessionToken, proxy = null, referralCode = '') {
+    constructor(sessionToken, proxy = null, referralCode = '', solverUrl = 'http://127.0.0.1:3000') {
         this.sessionToken = sessionToken;
         this.proxy = proxy;
         this.referralCode = referralCode;
+        this.solverUrl = solverUrl.replace(/\/+$/, '');
+        if (!this.solverUrl.includes('/cf-clearance-scraper')) {
+            this.solverUrl += '/cf-clearance-scraper';
+        }
         this.ws = null;
         this.tapInterval = null;
         this.balance = 0;
@@ -166,7 +169,7 @@ class FastTapper {
                         this.log(`Direct API fetch failed [Status: ${status}]. Trying Solver Fallback...`, 'WARN');
 
                         // FALLBACK: Use Turnstile Solver to get the session token via real browser
-                        const solverRes = await axios.post(TURNSTILE_SERVER, {
+                        const solverRes = await axios.post(this.solverUrl, {
                             url: 'https://api.thenanobutton.com/api/session',
                             mode: 'source',
                             // proxy: this.proxy ? { ... } -> Removed to save bandwidth
@@ -404,7 +407,7 @@ class FastTapper {
             }
             this.log('Requesting Turnstile token from local server (direct, no proxy)...');
 
-            const turnstileResponse = await axios.post(TURNSTILE_SERVER, {
+            const turnstileResponse = await axios.post(this.solverUrl, {
                 mode: 'turnstile-max',
                 url: 'https://thenanobutton.com/',
                 siteKey: this.sitekey
