@@ -301,20 +301,28 @@ io.on('connection', (socket) => {
     socket.on('stop-runner', (name) => stopRunner(name, true));
 
     socket.on('start-fleet', async ({ targetSize, autoWithdrawEnabled, withdrawLimit, mainWalletAddress: pWallet, defaultProxy }) => {
-        const mWallet = pWallet || settings.mainWalletAddress;
+        const mainWalletAddress = pWallet || settings.mainWalletAddress;
         settings.activeFleet = { targetSize, autoWithdraw: autoWithdrawEnabled, withdrawLimit };
         fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 4));
 
         allAccounts = await fillFleet(targetSize);
-        const sliced = allAccounts.slice(0, targetSize);
+        const accounts = allAccounts.slice(0, targetSize);
         Object.keys(runners).forEach(n => stopRunner(n, true));
 
-        io.emit('init', { accounts: sliced, runners: sliced.map(a => ({ name: a.name, status: 'deploying' })), nodeHealth });
+        io.emit('init', { accounts: accounts, runners: accounts.map(a => ({ name: a.name, status: 'deploying' })), nodeHealth });
 
-        for (const acc of sliced) {
-            const proxy = (defaultProxy && defaultProxy.trim()) ? defaultProxy : (acc.proxy || '');
-            startRunner({ ...acc, proxy: getRotatedProxy(proxy) }, autoWithdrawEnabled, withdrawLimit, mWallet);
+        // Divide fleet into chunks for multi_worker consolidation
+        const CHUNK_SIZE = 20;
+        const accountChunks = [];
+        for (let i = 0; i < accounts.length; i += CHUNK_SIZE) {
+            accountChunks.push(accounts.slice(i, i + CHUNK_SIZE));
         }
+
+        console.log(`[FLEET] Spawning ${accounts.length} units across ${accountChunks.length} processes...`);
+
+        accountChunks.forEach(chunk => {
+            startWorkerChunk(chunk, autoWithdrawEnabled, withdrawLimit, mainWalletAddress, defaultProxy);
+        });
     });
 
     socket.on('pause-fleet', () => {
@@ -398,67 +406,94 @@ function saveAccountState(name, earnings) {
     if (idx !== -1) allAccounts[idx].earnings = earnings;
 }
 
-function startRunner(acc, autoWithdraw, limit, mWallet) {
-    if (runners[acc.name]?.status === 'running') return;
-    const addr = (mWallet || '').replace('xrb_', 'nano_');
-    const thr = autoWithdraw ? limit : 0;
-    const sess = activeSessions[acc.name];
-    const sArg = (sess && sess.sessionToken) ? sess.sessionToken : 'AUTO';
-    const rCode = (settings.referralEnabled && settings.referralCode) ? settings.referralCode : '';
-    const seed = (sess && sess.proxyWalletSeed) ? sess.proxyWalletSeed : '';
-    const wAddr = (sess && sess.proxyWalletAddress) ? sess.proxyWalletAddress : '';
-    const sUrl = settings.turnstileSolverUrl || 'http://localhost:3000';
+function startWorkerChunk(chunk, autoWithdraw, limit, mWallet) {
+    const globalConfig = {
+        mainWalletAddress: (mWallet || '').replace('xrb_', 'nano_'),
+        withdrawThreshold: autoWithdraw ? limit : 0,
+        defaultProxy: settings.defaultProxy,
+        turnstileSolverUrl: settings.turnstileSolverUrl || 'http://localhost:3000'
+    };
 
-    const p = spawn('node', ['--max-old-space-size=128', 'fast_tap.js', sArg, acc.proxy || '', addr, thr.toString(), rCode, seed, wAddr, sUrl], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] });
+    // Prepare seeds for resume
+    const chunkWithSeeds = chunk.map(acc => {
+        const sess = activeSessions[acc.name];
+        return {
+            ...acc,
+            seed: sess?.proxyWalletSeed || '',
+            address: sess?.proxyWalletAddress || '',
+            sessionToken: sess?.sessionToken || 'AUTO'
+        };
+    });
 
-    runners[acc.name] = { process: p, status: 'running', pid: p.pid, earnings: parseFloat(acc.earnings) || 0, proxyWallet: null, logs: [] };
+    const p = spawn('node', ['--max-old-space-size=256', 'multi_worker.js', JSON.stringify(chunkWithSeeds), JSON.stringify(globalConfig)], {
+        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    });
+
+    // Track the process and its managed units
+    const chunkId = `chunk_${Math.random().toString(36).slice(2, 6)}`;
+
+    chunk.forEach(acc => {
+        runners[acc.name] = {
+            process: p,
+            chunkId,
+            status: 'initializing',
+            earnings: parseFloat(acc.earnings) || 0,
+            proxyWallet: activeSessions[acc.name]?.proxyWalletAddress || null
+        };
+    });
 
     p.on('message', (m) => {
         if (m?.type === 'rate-limited') rotateSharedProxy();
-        else if (m?.type === 'session-info') {
-            activeSessions[acc.name] = { sessionToken: m.sessionToken, proxyWalletSeed: m.proxyWalletSeed || '', proxyWalletAddress: m.proxyWalletAddress || '', earnings: runners[acc.name]?.earnings || 0, proxy: acc.proxy || '', savedAt: new Date().toISOString() };
-            flushSessions();
+        else if (m?.type === 'status-update') {
+            const runner = runners[m.name];
+            if (runner) {
+                runner.earnings = m.balance;
+                if (m.status) runner.status = m.status;
+                if (m.proxyWalletAddress) runner.proxyWallet = m.proxyWalletAddress;
+
+                // Keep persistent sessions updated
+                if (m.sessionToken || m.proxyWalletSeed) {
+                    activeSessions[m.name] = {
+                        ...activeSessions[m.name],
+                        sessionToken: m.sessionToken || activeSessions[m.name]?.sessionToken,
+                        proxyWalletSeed: m.proxyWalletSeed || activeSessions[m.name]?.proxyWalletSeed,
+                        proxyWalletAddress: m.proxyWalletAddress || activeSessions[m.name]?.proxyWalletAddress,
+                        earnings: m.balance,
+                        savedAt: new Date().toISOString()
+                    };
+                    flushSessions();
+                }
+            }
+        } else if (m?.type === 'log') {
+            pendingLogs.push({ name: m.name, msg: m.msg });
+            if (pendingLogs.length > 500) pendingLogs.shift();
         }
     });
 
-    p.stdout.on('data', (d) => {
-        if (!runners[acc.name]) return;
-        const raw = d.toString();
-        if (raw.includes('Balance:') || raw.includes('Tap Success!')) {
-            let m = raw.match(/Current Balance: ([\d.]+)/) || raw.match(/Tap Success! Balance: ([\d.]+)/);
-            if (m && runners[acc.name]) runners[acc.name].earnings = parseFloat(m[1]);
-            return;
-        }
-        raw.split('\n').filter(Boolean).forEach(l => {
-            let pM = l.match(/Proxy Wallet generated for session: (nano_[a-z0-9]+)/);
-            if (pM && runners[acc.name]) runners[acc.name].proxyWallet = pM[1];
-            if (l.includes('Starting consolidation')) { runners[acc.name].status = 'consolidating'; io.emit('runner-status', { name: acc.name, status: 'consolidating' }); }
-            if (l.includes('[SUCCESS] Consummated transfer')) { runners[acc.name].status = 'bridged'; runners[acc.name].earnings = 0; saveAccountState(acc.name, 0); io.emit('runner-status', { name: acc.name, status: 'bridged' }); }
-            if (l.includes('Refreshing session...')) { runners[acc.name].status = 'restarting'; io.emit('runner-status', { name: acc.name, status: 'restarting' }); }
-            if (l.includes('[WS] Connected!')) { runners[acc.name].status = 'running'; io.emit('runner-status', { name: acc.name, status: 'running' }); }
-            if (l.includes('[ERROR]') || l.includes('[FATAL]')) { runners[acc.name].status = 'error'; io.emit('runner-status', { name: acc.name, status: 'error' }); rescueWallet(acc.name); }
-            pendingLogs.push({ name: acc.name, msg: l.trim() });
-            if (pendingLogs.length > 500) pendingLogs.shift();
-        });
+    p.stderr.on('data', (d) => {
+        console.error(`[CHUNK ERROR ${chunkId}] ${d.toString()}`);
     });
 
     p.on('close', (c) => {
-        if (!runners[acc.name]) return;
-        const earns = runners[acc.name].earnings || 0;
-        if (runners[acc.name].status !== 'bridged') {
-            runners[acc.name].status = 'stopped';
-            if (earns > 0) rescueWallet(acc.name);
-        }
-        saveAccountState(acc.name, earns);
-        io.emit('runner-status', { name: acc.name, status: runners[acc.name].status });
-        runners[acc.name].process = null;
+        chunk.forEach(acc => {
+            if (runners[acc.name]) {
+                const runner = runners[acc.name];
+                if (runner.status !== 'bridged' && runner.earnings > 0) rescueWallet(acc.name);
+                delete runners[acc.name];
+            }
+        });
     });
 }
-
 function stopRunner(name, sweep = false) {
-    if (runners[name]?.process) {
-        if (sweep && runners[name].process.connected) runners[name].process.send({ type: 'stop_and_sweep' });
-        else runners[name].process.kill();
+    const runner = runners[name];
+    if (runner && runner.process) {
+        if (sweep && runner.process.connected) {
+            runner.process.send({ type: 'stop-runner', name: name, sweep: true });
+        } else if (runner.process.connected) {
+            runner.process.send({ type: 'stop-runner', name: name });
+        } else {
+            runner.process.kill();
+        }
     }
 }
 

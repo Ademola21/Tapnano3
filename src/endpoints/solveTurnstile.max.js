@@ -94,6 +94,18 @@ function _attemptSolve({ url, proxy }) {
       });
 
       console.log(`[SOLVER] Navigating to: ${url}`);
+      
+      // Bandwidth Optimization: Block unnecessary resources
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        const resourceType = req.resourceType();
+        if (['image', 'font', 'media', 'texttrack'].includes(resourceType)) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
+
       await page.goto(url, {
         waitUntil: "domcontentloaded",
         timeout: 60000,

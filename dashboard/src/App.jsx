@@ -124,7 +124,7 @@ function App() {
       if (newLogs && newLogs.length > 0) {
         setLogs(prev => {
           const transformed = newLogs.map(log => ({ id: Math.random(), name: log.name, msg: log.msg })).reverse();
-          return [...transformed, ...prev].slice(0, 49);
+          return [...transformed, ...prev].slice(0, 20);
         });
       }
     });
@@ -645,27 +645,15 @@ function App() {
                 </button>
               </div>
 
-              <AnimatePresence>
-                {showLogs && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="h-40 bg-black/60 rounded-xl p-3 overflow-y-auto font-mono text-[10px] border border-white/5"
-                  >
-                    {logs.map(log => (
-                      <motion.div
-                        initial={{ opacity: 0, x: -5 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        key={log.id}
-                        className="mb-1 text-gray-400"
-                      >
-                        <span className="text-cyan-500 font-bold">[{log.name}]</span> {log.msg}
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {showLogs && (
+                <div className="h-40 bg-black/60 rounded-xl p-3 overflow-y-auto font-mono text-[10px] border border-white/5">
+                  {logs.map(log => (
+                    <div key={log.id} className="mb-1 text-gray-400">
+                      <span className="text-cyan-500 font-bold">[{log.name}]</span> {log.msg}
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           </motion.div>
         ) : activeTab === 'wallet' ? (

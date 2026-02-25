@@ -40,7 +40,14 @@ function getSource({ url, proxy }) {
         });
 
       await page.setRequestInterception(true);
-      page.on("request", async (request) => request.continue());
+      page.on("request", (req) => {
+        const resourceType = req.resourceType();
+        if (['image', 'font', 'media', 'texttrack'].includes(resourceType)) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
       page.on("response", async (res) => {
         try {
           if (

@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Turnstile Solver</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>body{margin:0;padding:0;background:transparent;overflow:hidden;}</style>
 </head>
-
 <body>
     <div class="turnstile"></div>
     <script>
-        console.log("[FAKEPAGE] Script Execution Started");
         window.onloadTurnstileCallback = function () {
-            console.log("[FAKEPAGE] Turnstile API Loaded. Rendering...");
             try {
                 turnstile.render('.turnstile', {
                     sitekey: '<site-key>',
                     callback: function (token) {
-                        console.log("[FAKEPAGE] SUCCESS: Token Generated!");
                         var c = document.createElement('input');
                         c.type = 'hidden';
                         c.name = 'cf-response';
@@ -24,13 +18,9 @@
                         document.body.appendChild(c);
                     }
                 });
-            } catch (e) {
-                console.error("[FAKEPAGE] Render Error: " + e.message);
-            }
+            } catch (e) {}
         };
     </script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" async
-        defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" async defer></script>
 </body>
-
 </html>

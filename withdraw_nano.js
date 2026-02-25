@@ -29,9 +29,9 @@ async function getBalance() {
         attempts++;
         try {
             return await new Promise((resolve, reject) => {
-                console.log(`[INFO] Fetching balance (Attempt ${attempts}/3)...`);
-                const agent = proxy ? new HttpsProxyAgent(proxy) : undefined;
-                const ws = new WebSocket(WS_URL, { agent });
+                console.log(`[INFO] Fetching balance (Attempt ${attempts}/3) [VM DATA]...`);
+                // const agent = proxy ? new HttpsProxyAgent(proxy) : undefined; -> Removed
+                const ws = new WebSocket(WS_URL);
                 const timeout = setTimeout(() => { ws.terminate(); reject(new Error('Timeout')); }, 20000);
                 ws.on('message', (data) => {
                     try {
@@ -94,7 +94,7 @@ async function withdraw(amount) {
                         'Content-Type': 'application/json',
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
                     },
-                    httpsAgent: proxy ? new HttpsProxyAgent(proxy) : undefined,
+                    // httpsAgent: proxy ? new HttpsProxyAgent(proxy) : undefined, -> Removed
                     timeout: 40000
                 }
             );
