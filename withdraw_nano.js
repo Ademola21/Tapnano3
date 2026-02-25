@@ -61,7 +61,17 @@ async function solveTurnstile() {
                 siteKey: '0x4AAAAAACZpJ7kmZ3RsO1rU'
             }, { timeout: 180000 });
             if (res.data && res.data.token) return res.data.token;
-            throw new Error(res.data.message || 'Solver returned empty token');
+
+            console.log(`[WARN] Solver direct returned no token. Trying Solver with PROXY...`);
+            const res2 = await axios.post(TURNSTILE_SERVER, {
+                mode: 'turnstile-max',
+                url: 'https://thenanobutton.com/',
+                siteKey: '0x4AAAAAACZpJ7kmZ3RsO1rU',
+                proxy: proxy ? { server: proxy } : undefined
+            }, { timeout: 180000 });
+            if (res2.data && res2.data.token) return res2.data.token;
+
+            throw new Error(res2.data.message || 'Solver returned empty token even with proxy');
         } catch (e) {
             console.error(`[WARN] CAPTCHA attempt ${attempt}/3 failed: ${e.message}`);
             if (attempt < 3) {

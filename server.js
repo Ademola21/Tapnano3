@@ -414,6 +414,7 @@ function startWorkerChunk(chunk, autoWithdraw, limit, mWallet) {
         turnstileSolverUrl: settings.turnstileSolverUrl || 'http://localhost:3000',
         referralCode: (settings.referralEnabled && settings.referralCode) ? settings.referralCode : ''
     };
+    console.log(`[CHUNK ${chunkId}] Config: Solver=${globalConfig.turnstileSolverUrl} | Wallet=${globalConfig.mainWalletAddress.slice(0, 16)}...`);
 
     // Prepare seeds for resume
     const chunkWithSeeds = chunk.map(acc => {

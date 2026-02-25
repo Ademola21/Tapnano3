@@ -169,14 +169,23 @@ class FastTapper {
                         this.log(`Direct API fetch failed [Status: ${status}]. Trying Solver Fallback...`, 'WARN');
 
                         // FALLBACK: Use Turnstile Solver to get the session token via real browser
-                        const solverRes = await axios.post(this.solverUrl, {
+                        this.log('Trying Solver Fallback (Direct VM data)...');
+                        let solverRes = await axios.post(this.solverUrl, {
                             url: 'https://api.thenanobutton.com/api/session',
-                            mode: 'source',
-                            // proxy: this.proxy ? { ... } -> Removed to save bandwidth
-                        }, { timeout: 60000 }).catch(e => {
-                            this.log(`Solver Fallback failed: ${e.message}`, 'ERROR');
-                            return null;
-                        });
+                            mode: 'source'
+                        }, { timeout: 60000 }).catch(e => null);
+
+                        if (!solverRes || !solverRes.data || !solverRes.data.source || !solverRes.data.source.includes('token')) {
+                            this.log('Solver direct fetch failed or returned no token. Retrying Solver with PROXY...', 'WARN');
+                            solverRes = await axios.post(this.solverUrl, {
+                                url: 'https://api.thenanobutton.com/api/session',
+                                mode: 'source',
+                                proxy: this.proxy ? { server: this.proxy } : undefined
+                            }, { timeout: 60000 }).catch(e => {
+                                this.log(`Solver Fallback (with Proxy) failed: ${e.message}`, 'ERROR');
+                                return null;
+                            });
+                        }
 
                         if (solverRes && solverRes.data && solverRes.data.source) {
                             try {
@@ -187,7 +196,8 @@ class FastTapper {
                                     data = JSON.parse(jsonMatch[0]);
                                     this.log(`Session token extracted via Solver Fallback.`, 'SUCCESS');
                                 } else {
-                                    this.log(`Could not find token JSON in solver output.`, 'ERROR');
+                                    const snippet = html.replace(/[\n\r]/g, ' ').substring(0, 200);
+                                    this.log(`Could not find token JSON in solver output. Content: ${snippet}...`, 'ERROR');
                                 }
                             } catch (parseErr) {
                                 this.log(`Failed to parse solver output: ${parseErr.message}`, 'ERROR');
@@ -209,8 +219,9 @@ class FastTapper {
                 } catch (e) {
                     this.log(`Token fetch process failed: ${e.message}`, 'ERROR');
                     if (attempt < 3) {
-                        this.log('Retrying in 5 seconds...');
-                        await new Promise(r => setTimeout(r, 5000));
+                        const jitter = Math.floor(Math.random() * 5000) + 5000;
+                        this.log(`Retrying in ${jitter / 1000} seconds...`);
+                        await new Promise(r => setTimeout(r, jitter));
                     }
                 }
             }
@@ -218,7 +229,7 @@ class FastTapper {
                 this.log('Could not fetch session token after 3 attempts. Standing by...', 'FATAL');
                 this.status = 'error';
                 this.sendStatus();
-                return; // Don't kill the process, just stop this unit
+                return;
             }
         }
 
