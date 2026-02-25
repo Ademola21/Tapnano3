@@ -16,7 +16,9 @@ if [[ "$1" == "--fresh" ]]; then
     pm2 delete all 2>/dev/null || true
     killall node 2>/dev/null || true
     # Wipe state files that might have been tracked or left over
-    rm -f settings.json accounts.json active_sessions.json rescued_wallets.json
+    rm -rf settings.json accounts.json active_sessions.json rescued_wallets.json
+    # Wipe dashboard build to ensure clean UI
+    rm -rf dashboard/dist 2>/dev/null || true
     echo "State wiped. Proceeding with clean install..."
 fi
 
