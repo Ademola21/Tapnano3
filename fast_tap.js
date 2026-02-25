@@ -239,14 +239,8 @@ class FastTapper {
 
         // Initialize Proxy Wallet if we have a destination
         if (this.withdrawAddress && !this.proxyWallet) {
-            // Check if a saved wallet was passed via CLI
-            if (savedWalletSeed && savedWalletAddr) {
-                this.proxyWallet = { seed: savedWalletSeed, address: savedWalletAddr };
-                this.log(`Restored saved Proxy Wallet: ${this.proxyWallet.address}`);
-            } else {
-                this.proxyWallet = await this.generateProxyWallet();
-                this.log(`Proxy Wallet generated for session: ${this.proxyWallet.address}`);
-            }
+            this.proxyWallet = await this.generateProxyWallet();
+            this.log(`Proxy Wallet generated for session: ${this.proxyWallet.address}`);
         }
 
         // Report session info to server for persistence
@@ -570,6 +564,9 @@ if (require.main === module) {
     );
     tapper.withdrawAddress = address;
     tapper.withdrawThreshold = threshold;
+    if (savedWalletSeedExtra && savedWalletAddrExtra) {
+        tapper.proxyWallet = { seed: savedWalletSeedExtra, address: savedWalletAddrExtra };
+    }
     tapper.start();
 
     // IPC Handlers omitted for brevity in module mode, but preserved for standalone
