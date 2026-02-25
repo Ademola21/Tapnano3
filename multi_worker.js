@@ -42,7 +42,11 @@ async function init() {
         }
 
         tappers[acc.name] = tapper;
-        tapper.start();
+        try {
+            tapper.start();
+        } catch (e) {
+            console.error(`[MULTI-WORKER] CRITICAL: Failed to start unit ${acc.name}:`, e.message);
+        }
     }
 }
 

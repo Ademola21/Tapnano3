@@ -215,8 +215,10 @@ class FastTapper {
                 }
             }
             if (!fetched) {
-                this.log('Could not fetch session token after 3 attempts. Exiting.', 'FATAL');
-                process.exit(1);
+                this.log('Could not fetch session token after 3 attempts. Standing by...', 'FATAL');
+                this.status = 'error';
+                this.sendStatus();
+                return; // Don't kill the process, just stop this unit
             }
         }
 
@@ -545,15 +547,12 @@ if (require.main === module) {
     const savedWalletAddrExtra = process.argv[8] || '';
     const remoteSolverUrlExtra = process.argv[9] || null;
 
-    if (remoteSolverUrlExtra) {
-        global.remoteSolverUrl = remoteSolverUrlExtra;
-        TURNSTILE_SERVER = remoteSolverUrlExtra;
-        if (!TURNSTILE_SERVER.includes('/cf-clearance-scraper')) {
-            TURNSTILE_SERVER = TURNSTILE_SERVER.replace(/\/+$/, '') + '/cf-clearance-scraper';
-        }
-    }
-
-    const tapper = new FastTapper(token, proxy, referralCodeExtra);
+    const tapper = new FastTapper(
+        token,
+        proxy,
+        referralCodeExtra,
+        remoteSolverUrlExtra || 'http://127.0.0.1:3000'
+    );
     tapper.withdrawAddress = address;
     tapper.withdrawThreshold = threshold;
     tapper.start();
