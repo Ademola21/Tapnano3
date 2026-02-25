@@ -191,13 +191,17 @@ class FastTapper {
                             try {
                                 // The source mode returns the HTML content. If it's a JSON API, it's often wrapped in <body> or raw.
                                 const html = solverRes.data.source;
-                                const jsonMatch = html.match(/\{"token":"[a-zA-Z0-9._-]+"\}/);
-                                if (jsonMatch) {
-                                    data = JSON.parse(jsonMatch[0]);
-                                    this.log(`Session token extracted via Solver Fallback.`, 'SUCCESS');
+                                const startIdx = html.indexOf('{');
+                                const endIdx = html.lastIndexOf('}');
+                                if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+                                    const jsonStr = html.substring(startIdx, endIdx + 1);
+                                    data = JSON.parse(jsonStr);
+                                    if (data.token) {
+                                        this.log(`Session token extracted via Solver Fallback.`, 'SUCCESS');
+                                    }
                                 } else {
                                     const snippet = html.replace(/[\n\r]/g, ' ').substring(0, 200);
-                                    this.log(`Could not find token JSON in solver output. Content: ${snippet}...`, 'ERROR');
+                                    this.log(`Could not find token JSON block in solver output. Content: ${snippet}...`, 'ERROR');
                                 }
                             } catch (parseErr) {
                                 this.log(`Failed to parse solver output: ${parseErr.message}`, 'ERROR');
