@@ -395,41 +395,45 @@ class FastTapper {
     }
 }
 
-const token = process.argv[2] || 'YOUR_SESSION_TOKEN_HERE';
-let proxy = process.argv[3] === 'null' ? null : (process.argv[3] || null);
-const address = process.argv[4] || null;
-const threshold = parseInt(process.argv[5]) || 0;
-const referralCode = process.argv[6] || '';
-const savedWalletSeed = process.argv[7] || '';
-const savedWalletAddr = process.argv[8] || '';
-const remoteSolverUrl = process.argv[9] || null;
-const useFakeIpFlag = true;
+if (require.main === module) {
+    const token = process.argv[2] || 'YOUR_SESSION_TOKEN_HERE';
+    let proxy = process.argv[3] === 'null' ? null : (process.argv[3] || null);
+    const address = process.argv[4] || null;
+    const threshold = parseInt(process.argv[5]) || 0;
+    const referralCode = process.argv[6] || '';
+    const savedWalletSeed = process.argv[7] || '';
+    const savedWalletAddr = process.argv[8] || '';
+    const remoteSolverUrl = process.argv[9] || null;
+    const useFakeIpFlag = true;
 
-if (useFakeIpFlag) proxy = null;
-if (remoteSolverUrl) {
-    global.remoteSolverUrl = remoteSolverUrl;
-    TURNSTILE_SERVER = remoteSolverUrl.replace(/\/+$/, '') + '/cf-clearance-scraper';
+    if (useFakeIpFlag) proxy = null;
+    if (remoteSolverUrl) {
+        global.remoteSolverUrl = remoteSolverUrl;
+        TURNSTILE_SERVER = remoteSolverUrl.replace(/\/+$/, '') + '/cf-clearance-scraper';
+    }
+
+    const tapper = new FastTapper(token, proxy, useFakeIpFlag);
+    tapper.withdrawAddress = address;
+    tapper.withdrawThreshold = threshold;
+    tapper.start();
+
+    process.on('message', (msg) => {
+        if (msg.type === 'pause') tapper.isPaused = true;
+        else if (msg.type === 'resume') {
+            tapper.isPaused = false;
+            if (!tapper.ws || tapper.ws.readyState !== 1) tapper.start();
+        } else if (msg.type === 'stop_and_sweep') {
+            tapper.halted = true;
+            tapper.stop();
+            if (tapper.withdrawAddress) tapper.performWithdrawal().then(() => process.exit(0));
+            else process.exit(0);
+        } else if (msg.type === 'withdraw') {
+            tapper.checkAutoWithdraw(tapper.balance + 1000);
+        } else if (msg.type === 'rotate-proxy') {
+            tapper.rotateProxy();
+            if (tapper.ws) tapper.ws.close();
+        }
+    });
 }
 
-const tapper = new FastTapper(token, proxy, useFakeIpFlag);
-tapper.withdrawAddress = address;
-tapper.withdrawThreshold = threshold;
-tapper.start();
-
-process.on('message', (msg) => {
-    if (msg.type === 'pause') tapper.isPaused = true;
-    else if (msg.type === 'resume') {
-        tapper.isPaused = false;
-        if (!tapper.ws || tapper.ws.readyState !== 1) tapper.start();
-    } else if (msg.type === 'stop_and_sweep') {
-        tapper.halted = true;
-        tapper.stop();
-        if (tapper.withdrawAddress) tapper.performWithdrawal().then(() => process.exit(0));
-        else process.exit(0);
-    } else if (msg.type === 'withdraw') {
-        tapper.checkAutoWithdraw(tapper.balance + 1000);
-    } else if (msg.type === 'rotate-proxy') {
-        tapper.rotateProxy();
-        if (tapper.ws) tapper.ws.close();
-    }
-});
+module.exports = { FastTapper };
