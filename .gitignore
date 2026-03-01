@@ -9,4 +9,6 @@ rescued_wallets.json
 
 # Test artifacts
 test_referral.js
-referral_test_results.txt
+referral_test_results.txt*.log
+
+*.log

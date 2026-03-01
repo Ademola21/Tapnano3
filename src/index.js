@@ -1,10 +1,22 @@
 const express = require('express')
 const app = express()
+const server = require('http').createServer(app)
+const expressWs = require('express-ws')(app, server);
 const port = process.env.PORT || 3000
 const bodyParser = require('body-parser')
 const authToken = process.env.authToken || null
 const cors = require('cors')
+const cookieParser = require('cookie-parser');
 const reqValidate = require('./module/reqValidate')
+
+process.on('uncaughtException', (err) => {
+    console.error(`[SOLVER FATAL] Uncaught Exception: ${err.message}`);
+    console.error(err.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error(`[SOLVER FATAL] Unhandled Rejection at:`, promise, `reason:`, reason);
+});
 
 global.browserLength = 0
 global.browserLimit = Number(process.env.browserLimit) || 20
@@ -14,7 +26,9 @@ app.use(bodyParser.json({}))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 if (process.env.NODE_ENV !== 'development') {
-    let server = app.listen(port, () => { console.log(`Server running on port ${port}`) })
+    server.listen(port, () => {
+        console.log(`Server running on port ${port}`)
+    })
     try {
         server.timeout = global.timeOut
     } catch (e) { }
@@ -25,6 +39,7 @@ const getSource = require('./endpoints/getSource')
 const solveTurnstileMin = require('./endpoints/solveTurnstile.min')
 const solveTurnstileMax = require('./endpoints/solveTurnstile.max')
 const wafSession = require('./endpoints/wafSession')
+const wsBridge = require('./endpoints/wsBridge')
 
 
 app.post('/cf-clearance-scraper', async (req, res) => {
@@ -47,13 +62,19 @@ app.post('/cf-clearance-scraper', async (req, res) => {
 
     switch (data.mode) {
         case "source":
-            result = await getSource(data).then(res => { return { source: res, code: 200 } }).catch(err => { return { code: 500, message: err.message } })
+            result = await getSource(data).then(res => {
+                console.log(`[SOLVER] Source mode success. Cookies: ${res.cookies?.length || 0}, localStorage keys: ${Object.keys(res.localStorage || {}).length}`);
+                return { source: res.source, cookies: res.cookies, localStorage: res.localStorage, code: 200 }
+            }).catch(err => {
+                console.error(`[SOLVER ERR] Source mode failed: ${err.message}`);
+                return { code: 500, message: err.message }
+            })
             break;
         case "turnstile-min":
             result = await solveTurnstileMin(data).then(res => { return { token: res, code: 200 } }).catch(err => { return { code: 500, message: err.message } })
             break;
         case "turnstile-max":
-            result = await solveTurnstileMax(data).then(res => { return { token: res, code: 200 } }).catch(err => { return { code: 500, message: err.message } })
+            result = await solveTurnstileMax(data).then(res => { return { token: res.token, cf_clearance: res.cf_clearance, cookies: res.cookies, code: 200 } }).catch(err => { return { code: 500, message: err.message } })
             break;
         case "waf-session":
             result = await wafSession(data).then(res => { return { ...res, code: 200 } }).catch(err => { return { code: 500, message: err.message } })
@@ -64,6 +85,37 @@ app.post('/cf-clearance-scraper', async (req, res) => {
 
     res.status(result.code ?? 500).send(result)
 })
+
+app.post('/ws-bridge/start', async (req, res) => {
+    try {
+        const result = await wsBridge.startBridge(req.body);
+        res.json(result);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.ws('/ws-bridge/connect/:sessionId', (ws, req) => {
+    wsBridge.attachClientToBridge(req.params.sessionId, ws);
+});
+
+app.post('/ws-bridge/send/:sessionId', async (req, res) => {
+    try {
+        const result = await wsBridge.sendToBridge(req.params.sessionId, req.body.data);
+        res.json(result);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.post('/ws-bridge/stop/:sessionId', async (req, res) => {
+    try {
+        const result = await wsBridge.stopBridge(req.params.sessionId);
+        res.json(result);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
 
 app.use((req, res) => { res.status(404).json({ code: 404, message: 'Not Found' }) })
 

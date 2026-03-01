@@ -11,7 +11,7 @@ async function findAcceptLanguage(page) {
   });
 }
 
-function getSource({ url, proxy }) {
+function getSource({ url, proxy, headers }) {
   return new Promise(async (resolve, reject) => {
     if (!url) return reject("Missing url parameter");
     const context = await global.browser
@@ -51,6 +51,11 @@ function getSource({ url, proxy }) {
           username: proxy.username,
           password: proxy.password,
         });
+
+      if (headers) {
+        await page.setExtraHTTPHeaders(headers);
+      }
+
       let acceptLanguage = await findAcceptLanguage(page);
       await page.setRequestInterception(true);
       page.on("request", async (request) => request.continue());

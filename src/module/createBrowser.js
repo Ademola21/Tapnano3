@@ -35,7 +35,7 @@ async function createBrowser() {
             const valid = paths.find(p => fs.existsSync(p));
             if (valid) browserConfig.customConfig = { chromePath: valid };
         } else {
-            browserConfig.customConfig = { chromePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' };
+            browserConfig.customConfig = { chromePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' };
         }
 
         console.log(`[INFO] Launching Browser (Linux=${isLinux})...`);

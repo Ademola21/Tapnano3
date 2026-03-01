@@ -2,14 +2,15 @@ const fs = require("fs");
 
 const MAX_RETRIES = 3;
 
-function solveTurnstileMax({ url, proxy }) {
+function solveTurnstileMax({ url, proxy, headers }) {
   return new Promise(async (resolve, reject) => {
     if (!url) return reject("Missing url parameter");
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        const token = await _attemptSolve({ url, proxy });
-        return resolve(token);
+        const { token, cookies } = await _attemptSolve({ url, proxy, headers });
+        const cf_clearance = cookies?.find(c => c.name === 'cf_clearance')?.value;
+        return resolve({ token, cf_clearance });
       } catch (e) {
         const isRetryable = e.includes?.('Target closed') || e.includes?.('TargetCloseError') ||
           e.includes?.('Protocol error') || e.includes?.('Session closed');
@@ -25,7 +26,7 @@ function solveTurnstileMax({ url, proxy }) {
   });
 }
 
-function _attemptSolve({ url, proxy }) {
+function _attemptSolve({ url, proxy, headers }) {
   return new Promise(async (resolve, reject) => {
     const context = await global.browser
       .createBrowserContext({
@@ -69,6 +70,10 @@ function _attemptSolve({ url, proxy }) {
           username: proxy.username,
           password: proxy.password,
         });
+
+      if (headers) {
+        await page.setExtraHTTPHeaders(headers);
+      }
 
       // Injection to capture the response token
       await page.evaluateOnNewDocument(() => {
@@ -153,12 +158,13 @@ function _attemptSolve({ url, proxy }) {
           return null;
         }
       });
+      const cookies = await page.cookies();
       isResolved = true;
       clearInterval(mouseLoop);
       clearInterval(cl);
       try { await context.close(); } catch (e) { }
       if (!token || token.length < 10) return reject("Failed to get token");
-      return resolve(token);
+      return resolve({ token, cookies });
     } catch (e) {
       console.log(e);
 

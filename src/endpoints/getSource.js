@@ -1,4 +1,4 @@
-function getSource({ url, proxy }) {
+function getSource({ url, proxy, headers }) {
   return new Promise(async (resolve, reject) => {
     if (!url) return reject("Missing url parameter");
     const context = await global.browser
@@ -39,37 +39,29 @@ function getSource({ url, proxy }) {
           password: proxy.password,
         });
 
-      await page.setRequestInterception(true);
-      page.on("request", (req) => {
-        const resourceType = req.resourceType();
-        if (['image', 'font', 'media', 'texttrack'].includes(resourceType)) {
-          req.abort();
-        } else {
-          req.continue();
-        }
-      });
-      page.on("response", async (res) => {
-        try {
-          if (
-            [200, 302].includes(res.status()) &&
-            [url, url + "/"].includes(res.url())
-          ) {
-            await page
-              .waitForNavigation({ waitUntil: "load", timeout: 5000 })
-              .catch(() => { });
-            const html = await page.content();
-            const cookies = await page.cookies();
-            const userAgent = await page.evaluate(() => navigator.userAgent);
-            await context.close();
-            isResolved = true;
-            clearInterval(cl);
-            resolve({ html, cookies, userAgent });
-          }
-        } catch (e) { }
-      });
+      if (headers) {
+        await page.setExtraHTTPHeaders(headers);
+      }
+
       await page.goto(url, {
-        waitUntil: "domcontentloaded",
+        waitUntil: "networkidle2",
+        timeout: global.timeOut || 60000
       });
+
+      // Wait for scripts to settle and localStorage to be populated
+      await new Promise(r => setTimeout(r, 10000));
+
+      const html = await page.content();
+      const client = await page.target().createCDPSession();
+      const { cookies } = await client.send('Network.getAllCookies');
+      const localStorage = await page.evaluate(() => JSON.stringify(window.localStorage));
+
+      if (!isResolved) {
+        isResolved = true;
+        clearInterval(cl);
+        resolve({ source: html, cookies, localStorage: JSON.parse(localStorage) });
+        await context.close();
+      }
     } catch (e) {
       if (!isResolved) {
         await context.close();

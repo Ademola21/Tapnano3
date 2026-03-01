@@ -21,6 +21,9 @@ const schema = {
             },
             "additionalProperties": false
         },
+        "headers": {
+            "type": "object"
+        },
         "url": {
             "type": "string",
             "format": "uri",

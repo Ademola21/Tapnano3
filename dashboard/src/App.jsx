@@ -42,6 +42,7 @@ function App() {
   const [referralCode, setReferralCode] = useState('');
   const [referralEnabled, setReferralEnabled] = useState(false);
   const [fleetPaused, setFleetPaused] = useState(false);
+  const [useFakeIp, setUseFakeIp] = useState(false);
   const [turnstileSolverUrl, setTurnstileSolverUrl] = useState('http://localhost:3000');
 
   // Config State
@@ -69,6 +70,7 @@ function App() {
         setReferralCode(settings.referralCode || '');
         setReferralEnabled(settings.referralEnabled || false);
         setFleetPaused(settings.fleetPaused || false);
+        setUseFakeIp(settings.useFakeIp || false);
         setTurnstileSolverUrl(settings.turnstileSolverUrl || 'http://localhost:3000');
       }
       if (rescued) {
@@ -85,6 +87,7 @@ function App() {
       setProxyUser(s.proxyUser || '');
       setProxyPass(s.proxyPass || '');
       setFleetPaused(s.fleetPaused || false);
+      setUseFakeIp(s.useFakeIp || false);
       setTurnstileSolverUrl(s.turnstileSolverUrl || 'http://localhost:3000');
     });
 
@@ -155,7 +158,8 @@ function App() {
       autoWithdrawEnabled: autoWithdraw,
       withdrawLimit: parseFloat(withdrawLimit) || 0,
       mainWalletAddress,
-      defaultProxy: finalProxy
+      defaultProxy: finalProxy,
+      useFakeIp
     });
     // setIsRunning(true); // This line was in the instruction but `isRunning` is a derived state, not a state variable. Omitting to prevent error.
   };
@@ -169,7 +173,8 @@ function App() {
       proxyUser,
       proxyPass,
       referralCode,
-      referralEnabled
+      referralEnabled,
+      useFakeIp
     });
     setEditProxy(false);
     setEditWallet(false);
@@ -323,6 +328,31 @@ function App() {
                   </button>
                 </div>
 
+                {/* Fake IP Toggle */}
+                <div className="flex items-center justify-between bg-black/40 p-3 rounded-lg border border-white/5 mb-4">
+                  <div>
+                    <div className="text-[10px] font-bold text-text-dim uppercase tracking-wider mb-1">
+                      👻 X-Forwarded-For Fake IP
+                    </div>
+                    <div className="text-[9px] text-text-dim/60">
+                      Spoof headers to bypass rate limits (if proxy is omitted or blocked).
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const next = !useFakeIp;
+                      setUseFakeIp(next);
+                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled, fleetPaused, turnstileSolverUrl, useFakeIp: next } });
+                    }}
+                    className={`ml-3 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all w-16 text-center ${useFakeIp
+                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 glow-cyan'
+                      : 'bg-white/5 text-text-dim border border-white/10 hover:bg-white/10'
+                      }`}
+                  >
+                    {useFakeIp ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+
                 {proxyMode === 'brightdata' && (
                   <div className="bg-orange-500/5 border border-orange-500/20 rounded-lg p-3 mb-3">
                     <div className="flex items-center gap-2 mb-2">
@@ -339,43 +369,45 @@ function App() {
                       <input
                         type="text"
                         placeholder="brd.superproxy.io"
-                        className="input-field w-full text-[11px] font-mono py-1"
+                        className="input-field w-full font-mono text-[11px] py-1.5"
                         value={proxyHost}
                         onChange={(e) => setProxyHost(e.target.value)}
-                        disabled={!editProxy}
+                        disabled={!editProxy || useFakeIp}
                       />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <label className="text-[9px] text-text-dim/60 mb-1 block">PORT</label>
                       <input
                         type="text"
                         placeholder="33335"
-                        className="input-field w-full text-[11px] font-mono py-1"
+                        className="input-field w-full font-mono text-[11px] py-1.5"
                         value={proxyPort}
                         onChange={(e) => setProxyPort(e.target.value)}
-                        disabled={!editProxy}
+                        disabled={!editProxy || useFakeIp}
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[9px] text-text-dim/60 mb-1 block">USERNAME</label>
+                  <div className="flex gap-2">
+                    <div className="flex-[2]">
+                      <label className="text-[9px] text-text-dim/60 mb-1 block">ZONE USERNAME</label>
                       <input
                         type="text"
-                        className="input-field w-full text-[11px] font-mono py-1"
+                        placeholder="brd-customer-xxxx-zone-xxxx"
+                        className="input-field w-full font-mono text-[11px] py-1.5"
                         value={proxyUser}
                         onChange={(e) => setProxyUser(e.target.value)}
-                        disabled={!editProxy}
+                        disabled={!editProxy || useFakeIp}
                       />
                     </div>
-                    <div>
-                      <label className="text-[9px] text-text-dim/60 mb-1 block">PASSWORD</label>
+                    <div className="flex-1">
+                      <label className="text-[9px] text-text-dim/60 mb-1 block">ZONE PASSWORD</label>
                       <input
                         type="password"
-                        className="input-field w-full text-[11px] font-mono py-1"
+                        placeholder="••••••••"
+                        className="input-field w-full font-mono text-[11px] py-1.5"
                         value={proxyPass}
                         onChange={(e) => setProxyPass(e.target.value)}
-                        disabled={!editProxy}
+                        disabled={!editProxy || useFakeIp}
                       />
                     </div>
                   </div>
@@ -422,7 +454,7 @@ function App() {
                     onClick={() => {
                       const next = !referralEnabled;
                       setReferralEnabled(next);
-                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled: next, fleetPaused, turnstileSolverUrl } });
+                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled: next, fleetPaused, turnstileSolverUrl, useFakeIp } });
                     }}
                     className={`px-3 py-1 rounded text-[10px] font-bold border transition-all ${referralEnabled ? 'bg-green-500/20 text-green-400 border-green-500/50' : 'bg-white/5 text-text-dim border-white/10 hover:bg-white/10'}`}
                   >
@@ -439,7 +471,7 @@ function App() {
                   />
                   <button
                     onClick={() => {
-                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled, fleetPaused, turnstileSolverUrl } });
+                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled, fleetPaused, turnstileSolverUrl, useFakeIp } });
                     }}
                     className="px-4 py-2 rounded-lg text-[10px] font-bold border bg-cyan-500/20 text-cyan-400 border-cyan-500/50 hover:bg-cyan-500/30 transition-all"
                   >
@@ -468,7 +500,7 @@ function App() {
                   />
                   <button
                     onClick={() => {
-                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled, fleetPaused, turnstileSolverUrl } });
+                      socket.emit('save-settings', { ...{ mainWalletAddress, proxyMode, proxyHost, proxyPort, proxyUser, proxyPass, referralCode, referralEnabled, fleetPaused, turnstileSolverUrl, useFakeIp } });
                     }}
                     className="px-4 py-2 rounded-lg text-[10px] font-bold border bg-purple-500/20 text-purple-400 border-purple-500/50 hover:bg-purple-500/30 transition-all"
                   >
