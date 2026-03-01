@@ -30,7 +30,7 @@ function _attemptSolve({ url, proxy, headers }) {
   return new Promise(async (resolve, reject) => {
     const context = await global.browser
       .createBrowserContext({
-        proxyServer: proxy ? `http://${proxy.host}:${proxy.port}` : undefined,
+        // Proxy intentionally removed
       })
       .catch(() => null);
 
@@ -65,12 +65,7 @@ function _attemptSolve({ url, proxy, headers }) {
         }
       }
 
-      if (proxy?.username && proxy?.password)
-        await page.authenticate({
-          username: proxy.username,
-          password: proxy.password,
-        });
-
+      // Proxy authentication intentionally removed
       if (headers) {
         await page.setExtraHTTPHeaders(headers);
       }
@@ -99,7 +94,7 @@ function _attemptSolve({ url, proxy, headers }) {
       });
 
       console.log(`[SOLVER] Navigating to: ${url}`);
-      
+
       // Bandwidth Optimization: Block unnecessary resources
       await page.setRequestInterception(true);
       page.on('request', (req) => {

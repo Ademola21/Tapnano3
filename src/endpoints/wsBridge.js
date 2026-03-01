@@ -12,7 +12,7 @@ async function startBridge({ sessionId, url, proxy, headers, sessionToken, cooki
 
     console.log(`[SOLVER-WS] Creating browser context for ${sessionId}...`);
     const context = await global.browser.createBrowserContext({
-        proxyServer: proxy ? `http://${proxy.host}:${proxy.port}` : undefined,
+        // Proxy intentionally removed
     }).catch(err => {
         console.error(`[SOLVER-WS ERR] Failed to create context: ${err.message}`);
         throw err;
@@ -28,10 +28,7 @@ async function startBridge({ sessionId, url, proxy, headers, sessionToken, cooki
         await page.setCookie(...cookies).catch(err => console.error(`[SOLVER-WS ERR] Failed to set cookies: ${err.message}`));
     }
 
-    if (proxy?.username && proxy?.password) {
-        await page.authenticate({ username: proxy.username, password: proxy.password });
-    }
-
+    // Proxy authentication intentionally removed
     if (headers) {
         await page.setExtraHTTPHeaders(headers);
     }

@@ -34,6 +34,7 @@ const bridgeSessionId = `ws_${Math.random().toString(36).substring(2, 11)}`;
 let bridgeWs = null;
 let currentSessionToken = (sessionToken === 'AUTO') ? null : sessionToken;
 let browserCookies = '';
+let bridgeBalance = null;
 
 async function connectBridge() {
     try {
@@ -74,6 +75,12 @@ async function connectBridge() {
                         clearTimeout(timeout);
                         console.log('[INFO] Browser WebSocket is OPEN via bridge.');
                         resolve();
+                    } else if (msg.type === 'message') {
+                        const json = JSON.parse(msg.data);
+                        let b = json.session?.currentNano ?? json.currentNano ?? json.balance;
+                        if (b !== undefined && bridgeBalance === null) {
+                            bridgeBalance = b;
+                        }
                     }
                 } catch (e) { }
             });
@@ -95,22 +102,15 @@ async function getBalance() {
         console.log(`[INFO] Fetching balance via bridge...`);
         const timeout = setTimeout(() => { reject(new Error('Balance fetch timeout')); }, 20000);
 
-        const onMessage = (data) => {
-            try {
-                const msg = JSON.parse(data.toString());
-                if (msg.type === 'message') {
-                    const json = JSON.parse(msg.data);
-                    let b = json.totalEarnedNano ?? json.balance ?? json.session?.currentNano ?? json.currentNano;
-                    if (b !== undefined) {
-                        clearTimeout(timeout);
-                        bridgeWs.off('message', onMessage);
-                        resolve(b);
-                    }
-                }
-            } catch (e) { }
+        const checkBalance = () => {
+            if (bridgeBalance !== null) {
+                clearTimeout(timeout);
+                resolve(bridgeBalance);
+            } else {
+                setTimeout(checkBalance, 100);
+            }
         };
-
-        bridgeWs.on('message', onMessage);
+        checkBalance();
     });
 }
 
@@ -151,7 +151,7 @@ async function withdraw(amount) {
             const payload = {
                 type: 'req_http',
                 id: requestId,
-                url: '/api/withdraw', // Use relative URL or full URL, the bridge fetch handles it
+                url: 'https://api.thenanobutton.com/api/withdraw', // Must be absolute because bridge origin is the frontend
                 method: 'POST',
                 body: { token: currentSessionToken, address: nanoAddress, amount: amount, turnstileToken: currentToken || undefined }
             };
